@@ -33,4 +33,7 @@ Bientôt
 3. Entrez l'**adresse IP** du PC de la personne qui a créé le serveur.
 
 ## Auteurs
-auteurs...
+Fahme Elias 
+Mazyad Hussein
+Mazyad Mehdy
+Monnier Mathéo
