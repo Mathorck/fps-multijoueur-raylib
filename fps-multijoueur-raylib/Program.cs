@@ -9,101 +9,27 @@ namespace DeadOpsArcade3D
     {
         static void Main(string[] args)
         {
-            InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops Arcade");
-            ToggleFullscreen();
-            SetTargetFPS(60);
 
-            Camera3D camera = new Camera3D();
-            camera.Position = new Vector3(0.0f, 2.0f, 4.0f);
-            camera.Target = new Vector3(0.0f, 2.0f, 0.0f);
-            camera.Up = new Vector3(0.0f, 1.0f, 0.0f);
-            camera.FovY = 60.0f;
-            camera.Projection = CameraProjection.Perspective;
+            Console.WriteLine("1. Lancer le serveur\n2. Lancer le client");
+            string choice = Console.ReadLine();
 
-
-            Model alien = LoadModel("ressources/model3d/alien/alien.obj");
-
-
-            List<Player> Players = new List<Player>();
-            List<Bullets> Bullets = new List<Bullets>();
-
-            Players.Add(new Player(alien));
-
-            Weapon weapon = new Weapon();
-
-
-            //Initialisation du model 3d
-
-
-            DisableCursor();
-
-            float sensibilité = 0.05f;
-
-            while (!WindowShouldClose())
+            if (choice == "1")
             {
-                if (IsKeyPressed(KeyboardKey.F11))
-                {
-                    ToggleFullscreen();
-                }
-
-                // Mise a jour de la caméra (Déplacement)
-                UpdateCameraPro(ref camera,
-                    new Vector3(
-                        IsKeyDown(KeyboardKey.W) * 0.1f - IsKeyDown(KeyboardKey.S) * 0.1f,
-                        IsKeyDown(KeyboardKey.D) * 0.1f - IsKeyDown(KeyboardKey.A) * 0.1f,
-                        0.0f),
-                    new Vector3(
-                        GetMouseDelta().X * sensibilité,
-                        GetMouseDelta().Y * sensibilité,
-                        0.0f),
-                    0f);
-                if(IsMouseButtonPressed(MouseButton.Left))
-                {
-                    Bullets.Add(new Bullets(camera.Position, camera.Target, GetFrameTime(), weapon));
-                }
-                BeginDrawing();
-                BeginMode3D(camera);
-
-                //Map
-                ClearBackground(Color.White);
-                DrawPlane(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(32.0f, 32.0f), Color.LightGray);
-
-                //Munitions
-                for (int b = 0; b < Bullets.Count; b++)
-                {
-                    DrawCubeV(Bullets[b].Position, Bullets[b].Size, Color.Black);
-                    if (Bullets[b].update())
-                        Bullets.RemoveAt(b);
-                }
-
-                //Joueurs
-                for (int p = 0; p < Players.Count; p++)
-                {
-                    Players[p].Update(camera.Position);
-                    //DrawCubeV(Players[p].Position, Players[p].Size, Color.Green);
-                    //Model
-                    DrawModel(alien, Players[p].Position, 0.2f, Color.DarkGray);
-                    for (int b = 0; b < Bullets.Count; b++) 
-                    {
-                        if (CheckCollisionBoxes(Bullets[b].BoundingBox, Players[p].BoundingBox))
-                        {
-                            Players[p].life -= Bullets[b].Weapon.damage;
-                            Bullets.RemoveAt(b);
-                            if (Players[p].life <= 0)
-                            {
-                                ////tuer le player
-                            }
-                        }
-                    }
-                }
-
-                EndMode3D();
-                DrawRectangle(GetScreenWidth()/2, GetScreenHeight()/2, 10, 10, Color.Black);
-
-                EndDrawing();
+                Console.Write("Port du serveur (appuyez sur Entrée pour utiliser le port par défaut 3855): ");
+                string portInput = Console.ReadLine();
+                int port = string.IsNullOrWhiteSpace(portInput) ? 3855 : int.Parse(portInput);
+                Server.StartServer(port);
             }
-
-            CloseWindow();
+            else if (choice == "2")
+            {
+                Console.Write("Adresse du serveur: ");
+                string hostInput = Console.ReadLine();
+                string host = string.IsNullOrWhiteSpace(hostInput) ? "127.0.0.1" : hostInput;
+                Console.Write("Port (appuyez sur Entrée pour utiliser le port par défaut 3855): ");
+                string portInput = Console.ReadLine();
+                int port = string.IsNullOrWhiteSpace(portInput) ? 3855 : int.Parse(portInput);
+                Client.StartClient(host, port);
+            }
         }
     }
 

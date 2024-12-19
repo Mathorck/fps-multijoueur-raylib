@@ -11,24 +11,28 @@ namespace Classes
 {
     public class Player
     {
+        public static Model DefaultModel;
         public Vector3 Position;
+        public Vector3 Rotation;
+
         public Vector3 Size;
-        public float speed;
-        public float life;
+        public float Speed;
+        public float Life;
         public BoundingBox BoundingBox;
 
-        public Player(Model Model) 
-        { 
-            Position = new Vector3(0f, 0f, 0f);
-            Size = GetModelBoundingBox(Model).Max * 0.3f;
-            speed = 1f;
-            life = 100f;
+        public Player(float x,float y, float z, float xRot, float yRot, float zRot)
+        {
+            Position = new Vector3(x, y, z);
+            Size = GetModelBoundingBox(DefaultModel).Max * 0.3f;
+            Speed = 1f;
+            Life = 100f;
             BoundingBox = new BoundingBox(Position, Size);
+            Rotation = new Vector3(xRot, yRot, zRot);
         }
 
-        public void Update(Vector3 playerPos)
+        public void Update()
         {
-            
+
         }
     }
 }
