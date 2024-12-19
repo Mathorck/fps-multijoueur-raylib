@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "KzqhlNlweFowKHFr9NIrkr3OO2F92Poon4YtOfF8+l/SC7HRpluMLTDf7Ak20+7B/IdTdnxS8O9gDIyTR/XXrA==",
+  "success": true,
+  "projectFilePath": "F:\\Raylib\\Test 3d\\DeadOpsArcade3D.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\MazyadH1\\.nuget\\packages\\raylib-cs\\6.1.1\\raylib-cs.6.1.1.nupkg.sha512",
+    "C:\\Users\\MazyadH1\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
+  ],
+  "logs": []
+}
