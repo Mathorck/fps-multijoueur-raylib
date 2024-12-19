@@ -149,7 +149,7 @@ namespace DeadOpsArcade3D
             ToggleFullscreen();
             SetTargetFPS(60);
 
-            Player.DefaultModel = LoadModel("ressources/model3d/alien.obj");
+            Player.DefaultModel = LoadModel("ressources/model3d/tinker.obj");
 
             Camera3D camera = new Camera3D();
             camera.Position = new Vector3(0.0f, 2.0f, 4.0f);
@@ -212,7 +212,7 @@ namespace DeadOpsArcade3D
                     if (Bullets[b].update())
                         Bullets.RemoveAt(b);
                 }
-
+                //Ray ray = new Ray();
                 //Joueurs
                 for (int p = 0; p < playerList.Count; p++)
                 {

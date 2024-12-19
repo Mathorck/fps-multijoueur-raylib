@@ -63,8 +63,24 @@ namespace DeadOpsArcade3D
                         playerPositions[clientId] = message;
 
                         // Diffuser les positions de tous les joueurs
-                        string allPositions = string.Join(";", playerPositions);
-                        BroadcastMessage(allPositions + "/");
+                        foreach (var Client in clients)
+                        {
+                            string response = "";
+                            foreach (KeyValuePair<int, string> pair in playerPositions)
+                            {
+                                if (!(pair.Key == Client.Key))
+                                {
+                                    response += "[" + pair.Key + ", " + pair.Value + "]; ";
+                                }
+                            }
+                            sendPrivately(response, Client.Value);
+                        }
+
+
+                        //string allPositions = string.Join(";", playerPositions);
+
+
+                        //BroadcastMessage(allPositions + "/");
                     }
                 }
             }
@@ -74,6 +90,12 @@ namespace DeadOpsArcade3D
                 clients.Remove(clientId);
                 playerPositions.Remove(clientId);
             }
+        }
+
+        private static void sendPrivately(string message, TcpClient recever)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(message);
+            recever.GetStream().Write(data, 0, data.Length);
         }
 
         private static void BroadcastMessage(string message)

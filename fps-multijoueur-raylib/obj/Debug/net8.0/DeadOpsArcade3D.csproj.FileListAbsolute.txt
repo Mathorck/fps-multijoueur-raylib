@@ -45,3 +45,4 @@ D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\obj\Debug\net8.0\DeadOpsArc
 D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\obj\Debug\net8.0\ref\DeadOpsArcade3D.dll
 D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\model3d\humain.obj
 D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\model3d\alien.obj
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\model3d\tinker.obj

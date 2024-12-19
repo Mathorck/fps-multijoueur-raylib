@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DeadOpsArcade3D")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd56e0e6c3afea76521da318871947255c913e5c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+191bf6092fe62ec87a1469fcd4de77dc4def6f44")]
 [assembly: System.Reflection.AssemblyProductAttribute("DeadOpsArcade3D")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DeadOpsArcade3D")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
