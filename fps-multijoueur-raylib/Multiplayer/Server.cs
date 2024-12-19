@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace DeadOpsArcade3D
+namespace DeadOpsArcade3D.Multiplayer
 {
     class Server
     {
@@ -16,6 +12,10 @@ namespace DeadOpsArcade3D
 
         private static Dictionary<int, string> playerPositions = new Dictionary<int, string>();
 
+        /// <summary>
+        /// Cela démarre le serveur
+        /// </summary>
+        /// <param name="port">le ports</param>
         public static void StartServer(int port)
         {
             server = new TcpListener(IPAddress.Any, port);
@@ -92,12 +92,21 @@ namespace DeadOpsArcade3D
             }
         }
 
+        /// <summary>
+        /// Cela envoye un message par le réseau a un Appareil
+        /// </summary>
+        /// <param name="message">Message à envoyer</param>
+        /// <param name="recever">Appareil qui reçoit</param>
         private static void sendPrivately(string message, TcpClient recever)
         {
             byte[] data = Encoding.UTF8.GetBytes(message);
             recever.GetStream().Write(data, 0, data.Length);
         }
 
+        /// <summary>
+        /// Cela envoye un message a toutes les personnes qui sont connectée
+        /// </summary>
+        /// <param name="message"></param>
         private static void BroadcastMessage(string message)
         {
             byte[] data = Encoding.UTF8.GetBytes(message);

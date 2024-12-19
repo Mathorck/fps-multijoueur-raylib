@@ -1,15 +1,9 @@
 ﻿using Raylib_cs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DeadOpsArcade3D
+namespace DeadOpsArcade3D.GameElement
 {
-    public class Bullets
+    public class Bullet
     {
         public Vector3 Position;
         public Vector3 Size;
@@ -19,7 +13,7 @@ namespace DeadOpsArcade3D
         public Weapon Weapon;
         public BoundingBox BoundingBox;
 
-        public Bullets(Vector3 playerPos, Vector3 Direction, float GetFrameTime, Weapon w) 
+        public Bullet(Vector3 playerPos, Vector3 Direction, float GetFrameTime, Weapon w) 
         { 
             Position = new Vector3(playerPos.X, playerPos.Y - 0.1f, playerPos.Z);
             Size = new Vector3(0.1f, 0.1f, 0.1f);
@@ -39,6 +33,20 @@ namespace DeadOpsArcade3D
                 return true;
             }
             return false;
+        }
+
+        /// <summary>
+        /// Méthode qui affiche toutes les balles de la liste
+        /// </summary>
+        /// <param name="bullets">Liste des balles</param>
+        public static void Draw(List<Bullet> bullets)
+        {
+            for (int b = 0; b < bullets.Count; b++)
+            {
+                Raylib.DrawCubeV(bullets[b].Position, bullets[b].Size, Color.Black);
+                if (bullets[b].update())
+                    bullets.RemoveAt(b);
+            }
         }
     }
 }

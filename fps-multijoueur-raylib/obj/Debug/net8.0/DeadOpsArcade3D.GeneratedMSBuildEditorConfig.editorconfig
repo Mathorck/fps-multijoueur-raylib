@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = DeadOpsArcade3D
-build_property.ProjectDir = D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\
+build_property.ProjectDir = M:\!dev\Cs\fps-multijoueur-raylib\fps-multijoueur-raylib\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

@@ -1,0 +1,71 @@
+# Fichiers et dossiers communs aux projets C#
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Fichiers spécifiques à Visual Studio
+.vs/
+*.vsp
+*.vspx
+*.vsmdi
+*.testsettings
+*.ide.*
+*.tlog
+*.cachefile
+*.VC.db
+*.VC.VC.opendb
+
+# Fichiers spécifiques à Rider
+.idea/
+*.iml
+.idea_modules/
+.idea/workspace.xml
+.idea/gradle.xml
+.idea/libraries/
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/vcs.xml
+.idea/httpRequests/
+
+# Fichiers spécifiques aux builds
+*.pdb
+*.ilk
+*.obj
+*.idb
+*.tmp
+*.log
+*.mdf
+*.ldf
+*.ndk
+*.swp
+
+# Logs
+*.log
+*.tlog
+
+# Fichiers spécifiques à NuGet
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Fichiers de configuration utilisateur spécifiques
+*.local
+*.orig
+*.bak
+*.bak2
+
+# Node modules (si vous utilisez Node.js dans votre projet)
+node_modules/
+
+# Fichiers spécifiques aux systèmes d'exploitation
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+.Trash-*
+*.swp
+*.swo
