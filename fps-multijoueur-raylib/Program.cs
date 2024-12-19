@@ -9,7 +9,7 @@ namespace DeadOpsArcade3D
     {
         static void Main(string[] args)
         {
-            InitWindow(1920, 1080, "Dead Ops Arcade");
+            InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops Arcade");
             ToggleFullscreen();
             SetTargetFPS(60);
 
@@ -20,22 +20,32 @@ namespace DeadOpsArcade3D
             camera.FovY = 60.0f;
             camera.Projection = CameraProjection.Perspective;
 
+
+            Model alien = LoadModel("ressources/model3d/alien/alien.obj");
+
+
             List<Player> Players = new List<Player>();
             List<Bullets> Bullets = new List<Bullets>();
 
-            Players.Add(new Player());
+            Players.Add(new Player(alien));
 
             Weapon weapon = new Weapon();
 
 
             //Initialisation du model 3d
-            Model alien = LoadModel("ressources/model3d/alien/alien.obj");
 
 
             DisableCursor();
 
+            float sensibilité = 0.05f;
+
             while (!WindowShouldClose())
             {
+                if (IsKeyPressed(KeyboardKey.F11))
+                {
+                    ToggleFullscreen();
+                }
+
                 // Mise a jour de la caméra (Déplacement)
                 UpdateCameraPro(ref camera,
                     new Vector3(
@@ -43,16 +53,14 @@ namespace DeadOpsArcade3D
                         IsKeyDown(KeyboardKey.D) * 0.1f - IsKeyDown(KeyboardKey.A) * 0.1f,
                         0.0f),
                     new Vector3(
-                        GetMouseDelta().X * 0.05f,
-                        GetMouseDelta().Y * 0.05f,
+                        GetMouseDelta().X * sensibilité,
+                        GetMouseDelta().Y * sensibilité,
                         0.0f),
                     0f);
-
                 if(IsMouseButtonPressed(MouseButton.Left))
                 {
                     Bullets.Add(new Bullets(camera.Position, camera.Target, GetFrameTime(), weapon));
                 }
-
                 BeginDrawing();
                 BeginMode3D(camera);
 
@@ -72,36 +80,30 @@ namespace DeadOpsArcade3D
                 for (int p = 0; p < Players.Count; p++)
                 {
                     Players[p].Update(camera.Position);
-                    DrawCubeV(Players[p].Position, Players[p].Size, Color.Green);
+                    //DrawCubeV(Players[p].Position, Players[p].Size, Color.Green);
                     //Model
-                    Raylib.DrawModel(alien, Players[p].Position, 0.2f, Color.DarkGray);
+                    DrawModel(alien, Players[p].Position, 0.2f, Color.DarkGray);
                     for (int b = 0; b < Bullets.Count; b++) 
                     {
-                        if (CheckCollisionBoxes(new BoundingBox(Bullets[b].Position, Bullets[b].Size), new BoundingBox(Players[p].Position, Players[p].Size)))
+                        if (CheckCollisionBoxes(Bullets[b].BoundingBox, Players[p].BoundingBox))
                         {
                             Players[p].life -= Bullets[b].Weapon.damage;
                             Bullets.RemoveAt(b);
                             if (Players[p].life <= 0)
                             {
                                 ////tuer le player
-                                Console.WriteLine("Il est mort");
                             }
                         }
                     }
                 }
 
                 EndMode3D();
-                DrawRectangle(-5, -5, 10, 10, Color.Black);
+                DrawRectangle(GetScreenWidth()/2, GetScreenHeight()/2, 10, 10, Color.Black);
 
                 EndDrawing();
             }
 
             CloseWindow();
-        }
-
-        public void shoot()
-        {
-
         }
     }
 

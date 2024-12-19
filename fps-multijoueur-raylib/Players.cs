@@ -15,13 +15,15 @@ namespace Classes
         public Vector3 Size;
         public float speed;
         public float life;
+        public BoundingBox BoundingBox;
 
-        public Player() 
+        public Player(Model Model) 
         { 
             Position = new Vector3(0f, 0f, 0f);
-            Size = new Vector3(1f, 5f, 1f);
+            Size = GetModelBoundingBox(Model).Max * 0.3f;
             speed = 1f;
             life = 100f;
+            BoundingBox = new BoundingBox(Position, Size);
         }
 
         public void Update(Vector3 playerPos)
