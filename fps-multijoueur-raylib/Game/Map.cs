@@ -1,4 +1,5 @@
 using System.Numerics;
+using DeadOpsArcade3D.GameElement;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
 
@@ -6,6 +7,7 @@ namespace DeadOpsArcade3D.Game;
 
 public static class Map
 {
+    //public static BoundingBox Ground = new BoundingBox(new Vector3(-32.0f, 0f, -32.0f), new Vector3(32.0f, 1f, 32.0f));
     public static List<BoundingBox> Obstacles = new List<BoundingBox>
     {
         // Objets définis avec leurs BoundingBox respectifs
@@ -19,8 +21,9 @@ public static class Map
         new BoundingBox(new Vector3(-32.0f, -4.0f, 31.5f), new Vector3(32.0f, 6.0f, 32.5f)),  // Mur arri�re
         new BoundingBox(new Vector3(-32.5f, -4.0f, -32.0f), new Vector3(-31.5f, 6.0f, 32.0f)), // Mur gauche
         new BoundingBox(new Vector3(31.5f, -4.0f, -32.0f), new Vector3(32.5f, 6.0f, 32.0f)),  // Mur droit
-
-        new BoundingBox(new Vector3(-32.0f, 0f, -32.0f), new Vector3(32.0f, 1f, 32.0f))
+        
+        new BoundingBox(new Vector3(-32.0f, 0f, -32.0f), new Vector3(32.0f, 1f, 32.0f)),
+        new BoundingBox(new Vector3(-32.0f, 10f, -32.0f), new Vector3(32.0f, 11f, 32.0f))
     };
 
     public static void Render()
@@ -37,7 +40,7 @@ public static class Map
 
         // Mur avant
         Raylib.DrawCube(new Vector3(0.0f, 1.0f, -32.0f), 64.0f, 10.0f, 1.0f, Color.DarkGray);
-        // Mur arri�re
+        // Mur arrière
         Raylib.DrawCube(new Vector3(0.0f, 1.0f, 32.0f), 64.0f, 10.0f, 1.0f, Color.DarkGray);
         // Mur gauche
         Raylib.DrawCube(new Vector3(-32.0f, 1.0f, 0.0f), 1.0f, 10.0f, 64.0f, Color.DarkGray);
@@ -49,5 +52,7 @@ public static class Map
         {
             Raylib.DrawBoundingBox(bb,Color.Red);
         }
+
+        Player.DrawRays();
     }
 }

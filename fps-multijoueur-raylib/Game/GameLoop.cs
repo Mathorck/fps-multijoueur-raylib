@@ -8,7 +8,7 @@ namespace DeadOpsArcade3D.Game;
 
 public static class GameLoop
 {
-    private static Camera3D camera;
+    public static Camera3D camera;
     
     private static Weapon weapon = new Weapon();
     
@@ -23,7 +23,7 @@ public static class GameLoop
     /// </summary>
     public static void StartGame()
     {
-        InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops Arcade");
+        InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops 3D");
         ToggleFullscreen();
         SetTargetFPS(60);
         
@@ -45,7 +45,9 @@ public static class GameLoop
                 ferme = true;
             ///////////////////
         }
+
         CloseWindow();
+        Environment.Exit(0);
     }
 
     /// <summary>
