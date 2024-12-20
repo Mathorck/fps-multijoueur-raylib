@@ -10,9 +10,6 @@ public static class GameLoop
 {
     private static Camera3D camera;
     
-    /// <summary>Liste des qui contient tous les joueurs </summary>
-    private static List<Player> playerList = new List<Player>();
-    private static List<Bullet> BulletsList = new List<Bullet>();
     private static Weapon weapon = new Weapon();
     
     /// <summary>Variable qui dit si la fenêtre devrait se fermer </summary>
@@ -48,6 +45,7 @@ public static class GameLoop
                 ferme = true;
             ///////////////////
         }
+        CloseWindow();
     }
 
     /// <summary>
@@ -77,22 +75,16 @@ public static class GameLoop
     {
         Client.SendInfo(camera);
         Player.Movement(ref camera);
-        weapon.Fire(BulletsList, camera);
+        weapon.Fire(Bullet.BulletsList, camera);
         
         BeginDrawing();
         BeginMode3D(camera);
 
-        // Map
         Map.Render();
         
-        // Bullets
-        Bullet.Draw(BulletsList);
+        Bullet.Draw(Bullet.BulletsList);
 
-        //Joueurs
-        for (int i = 0; i < playerList.Count; i++)
-        {
-            playerList[i].Draw(playerList);
-        }
+        Player.DrawAll(Player.PlayerList);
         
         EndMode3D();
         Gui.Render();
