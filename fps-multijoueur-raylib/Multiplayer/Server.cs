@@ -33,7 +33,7 @@ namespace DeadOpsArcade3D.Multiplayer
                 TcpClient client = server.AcceptTcpClient();
                 clients[clientCounter] = client;
                 //                               | pos | rot |
-                playerPositions[clientCounter] = "0,0,0,0,2,0"; // Position initiale
+                playerPositions[clientCounter] = "0,0,0,0,2,0,false"; // Position initiale
                 Console.WriteLine("Nouveau client connecté : " + clientCounter);
                 Thread clientThread = new Thread(HandleClient);
                 clientThread.Start(clientCounter);
@@ -75,12 +75,6 @@ namespace DeadOpsArcade3D.Multiplayer
                             }
                             sendPrivately(response, Client.Value);
                         }
-
-
-                        //string allPositions = string.Join(";", playerPositions);
-
-
-                        //BroadcastMessage(allPositions + "/");
                     }
                 }
             }

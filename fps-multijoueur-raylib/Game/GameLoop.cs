@@ -10,16 +10,13 @@ public static class GameLoop
 {
     private static Camera3D camera;
     
-    /// <summary>Liste des qui contient tous les joueurs </summary>
-    private static List<Player> playerList = new List<Player>();
-    private static List<Bullet> BulletsList = new List<Bullet>();
     private static Weapon weapon = new Weapon();
     
     /// <summary>Variable qui dit si la fenêtre devrait se fermer </summary>
     private static bool ferme = false;
     
     // sera sûrement mise dans les param
-    public static float Sensibilite = 0.05f;
+    public static float sensibilité = 0.05f;
     
     /// <summary>
     /// Démarre le jeu
@@ -47,17 +44,6 @@ public static class GameLoop
             if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */)
                 ferme = true;
             ///////////////////
-
-            //Console.WriteLine("Target : " + camera.Target);
-            //Console.WriteLine("Position : " + camera.Position);
-
-            //Console.WriteLine("Soustraction : " + (camera.Position - camera.Target));
-
-            //Console.WriteLine("Camera UP : " + camera.Up);
-
-            //Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Y - camera.Target.Y));
-            //Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Z - camera.Position.Z) * (180 / Math.PI) + 180);
-
         }
         CloseWindow();
     }
@@ -69,7 +55,15 @@ public static class GameLoop
     private static void SetVariables()
     {
         // Modèle utilisé par les joueurs
-        Player.DefaultModel = LoadModel("ressources/model3d/tinker.obj");
+        Player.DefaultModel = LoadModel("ressources/model3d/alien.obj");
+
+        // Raycast
+        Player.RayW = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayS = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayD = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayA = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayUp = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayDown = new Ray(Vector3.One, Vector3.Zero);
 
         // Caméra du joueur
         camera = new Camera3D
@@ -89,22 +83,16 @@ public static class GameLoop
     {
         Client.SendInfo(camera);
         Player.Movement(ref camera);
-        weapon.Fire(BulletsList, camera);
+        weapon.Fire(Bullet.BulletsList, camera);
         
         BeginDrawing();
         BeginMode3D(camera);
 
-        // Map
         Map.Render();
         
-        // Bullets
-        Bullet.Draw(BulletsList);
+        Bullet.Draw(Bullet.BulletsList);
 
-        //Joueurs
-        for (int i = 0; i < playerList.Count; i++)
-        {
-            playerList[i].Draw(playerList);
-        }
+        Player.DrawAll(Player.PlayerList);
         
         EndMode3D();
         Gui.Render();

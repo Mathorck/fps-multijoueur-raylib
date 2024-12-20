@@ -1,5 +1,6 @@
 ﻿using Raylib_cs;
 using static Raylib_cs.Raylib;
+using DeadOpsArcade3D.Multiplayer;
 
 namespace DeadOpsArcade3D.GameElement
 {
@@ -18,7 +19,8 @@ namespace DeadOpsArcade3D.GameElement
         {
             if (IsMouseButtonPressed(MouseButton.Left))
             {
-                BulletsList.Add(new Bullet(camera.Position, camera.Target, GetFrameTime(), this));
+                BulletsList.Add(new Bullet(camera.Position, camera.Target, this));
+                Client.Fire();
             }
         }
     }
