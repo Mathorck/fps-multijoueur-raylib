@@ -36,4 +36,6 @@ Bientôt
 Fahme Elias        
 Mazyad Hussein        
 Mazyad Mehdy       
-Monnier Mathéo        
+Monnier Mathéo     
+Calame Quentin      
+Margotin Virgile         
