@@ -10,6 +10,9 @@ public static class GameLoop
 {
     private static Camera3D camera;
     
+    /// <summary>Liste des qui contient tous les joueurs </summary>
+    private static List<Player> playerList = new List<Player>();
+    private static List<Bullet> BulletsList = new List<Bullet>();
     private static Weapon weapon = new Weapon();
     
     /// <summary>Variable qui dit si la fenêtre devrait se fermer </summary>
@@ -44,6 +47,18 @@ public static class GameLoop
             if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */)
                 ferme = true;
             ///////////////////
+            ///
+
+            //Console.WriteLine("Target : " + camera.Target);
+            //Console.WriteLine("Position : " + camera.Position);
+
+            //Console.WriteLine("Soustraction : " + (camera.Position - camera.Target));
+
+            //Console.WriteLine("Camera UP : " + camera.Up);
+
+            //Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Y - camera.Target.Y));
+            Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Z - camera.Position.Z) * (180 / Math.PI) + 180);
+
         }
         CloseWindow();
     }
@@ -75,16 +90,22 @@ public static class GameLoop
     {
         Client.SendInfo(camera);
         Player.Movement(ref camera);
-        weapon.Fire(Bullet.BulletsList, camera);
+        weapon.Fire(BulletsList, camera);
         
         BeginDrawing();
         BeginMode3D(camera);
 
+        // Map
         Map.Render();
         
-        Bullet.Draw(Bullet.BulletsList);
+        // Bullets
+        Bullet.Draw(BulletsList);
 
-        Player.DrawAll(Player.PlayerList);
+        //Joueurs
+        for (int i = 0; i < playerList.Count; i++)
+        {
+            playerList[i].Draw(playerList);
+        }
         
         EndMode3D();
         Gui.Render();
