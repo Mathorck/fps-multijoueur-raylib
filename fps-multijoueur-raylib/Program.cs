@@ -27,6 +27,13 @@ namespace DeadOpsArcade3D
                 int port = string.IsNullOrWhiteSpace(portInput) ? 3855 : int.Parse(portInput);
                 Client.StartClient(host, port);
             }
+            else
+            {
+                int port = 3855;
+                string host = "127.0.0.1";
+                Server.StartServer(port);
+                Client.StartClient(host, port);
+            }
         }
     }
 

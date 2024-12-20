@@ -7,7 +7,16 @@ namespace DeadOpsArcade3D.GameElement
 {
     public class Player
     {
+        const float JUMP_HEIGHT = 5f;
+        const float JUMP_SPEED = 15f;
+        const float PLAYER_SPEED = 0.1f;
+
         public static Model DefaultModel;
+        public static bool isJumping = false;
+        public static bool isGoingUp = false;
+        public static float initpos = 0;
+
+
         public Vector3 Position;
         public Vector3 Rotation;
 
@@ -65,10 +74,55 @@ namespace DeadOpsArcade3D.GameElement
         public static void Movement(ref Camera3D camera)
         {
             // TODO: Saut
+            if (IsKeyPressed(KeyboardKey.Space) && !isJumping)
+            {
+                isJumping = true;
+                isGoingUp = true;
+                initpos = camera.Position.Y;
+            }
+            if (isJumping)
+            {
+                //Console.WriteLine($"if({camera.Position.Y} < {2 + JUMP_HEIGHT})");
+                if (camera.Position.Y < initpos + JUMP_HEIGHT && isGoingUp)
+                {
+                    //camera.Position.Y += JUMP_SPEED * GetFrameTime() / (camera.Position.Y/(initpos + JUMP_HEIGHT / 5));
+                    //camera.Target.Y += JUMP_SPEED * GetFrameTime() / (camera.Position.Y / (initpos + JUMP_HEIGHT / 5));
+                    camera.Position.Y += camera.Position.Y / ((camera.Position.Y + JUMP_HEIGHT) / 2) * JUMP_SPEED * GetFrameTime();
+                    camera.Target.Y += camera.Position.Y / ((camera.Position.Y + JUMP_HEIGHT) / 2) * JUMP_SPEED * GetFrameTime();
+                }
+                else if (camera.Position.Y > initpos)
+                {
+                    if (camera.Position.Y - camera.Position.Y / ((camera.Position.Y + JUMP_HEIGHT) / 2) * JUMP_SPEED * GetFrameTime() > initpos)
+                    {
+                        //camera.Position.Y -= JUMP_SPEED * GetFrameTime() / (camera.Position.Y / (initpos + JUMP_HEIGHT / 5));
+                        //camera.Target.Y -= JUMP_SPEED * GetFrameTime() / (camera.Position.Y / (initpos + JUMP_HEIGHT / 5));
+                        camera.Position.Y -= camera.Position.Y / ((camera.Position.Y + JUMP_HEIGHT) / 2) * JUMP_SPEED * GetFrameTime();
+                        camera.Target.Y -= camera.Position.Y / ((camera.Position.Y + JUMP_HEIGHT) / 2) * JUMP_SPEED * GetFrameTime();
+                    }
+                    else
+                    {
+                        camera.Target.Y -= camera.Position.Y - initpos;
+                        camera.Position.Y = initpos;
+                    }
+                    isGoingUp = false;
+                }
+                else
+                {
+                    isJumping = false;
+                    isGoingUp = false;
+                }
+
+            }
+
+            ///<-
+
+            ///->
+
+            // Mise a jour de la caméra (Déplacement)
             UpdateCameraPro(ref camera,
                 new Vector3(
-                    IsKeyDown(KeyboardKey.W) * 0.1f - IsKeyDown(KeyboardKey.S) * 0.1f,
-                    IsKeyDown(KeyboardKey.D) * 0.1f - IsKeyDown(KeyboardKey.A) * 0.1f,
+                    IsKeyDown(KeyboardKey.W) * PLAYER_SPEED - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED,
+                    IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED,
                     0.0f),
                 new Vector3(
                     GetMouseDelta().X * GameLoop.sensibilité,
