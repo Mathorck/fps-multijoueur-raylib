@@ -19,7 +19,7 @@ public static class GameLoop
     private static bool ferme = false;
     
     // sera sûrement mise dans les param
-    public static float sensibilité = 0.05f;
+    public static float Sensibilite = 0.05f;
     
     /// <summary>
     /// Démarre le jeu
@@ -47,7 +47,6 @@ public static class GameLoop
             if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */)
                 ferme = true;
             ///////////////////
-            ///
 
             //Console.WriteLine("Target : " + camera.Target);
             //Console.WriteLine("Position : " + camera.Position);
@@ -57,7 +56,7 @@ public static class GameLoop
             //Console.WriteLine("Camera UP : " + camera.Up);
 
             //Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Y - camera.Target.Y));
-            Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Z - camera.Position.Z) * (180 / Math.PI) + 180);
+            //Console.WriteLine(Math.Atan2(camera.Target.X - camera.Position.X, camera.Target.Z - camera.Position.Z) * (180 / Math.PI) + 180);
 
         }
         CloseWindow();

@@ -1,4 +1,5 @@
-﻿using DeadOpsArcade3D.Multiplayer;
+﻿using DeadOpsArcade3D.Game;
+using DeadOpsArcade3D.Multiplayer;
 
 using static Raylib_cs.Raylib;
 using Raylib_cs;
@@ -7,215 +8,17 @@ namespace DeadOpsArcade3D
 {
     class Program
     {
-        const int MAX_INPUT_CHARS = 13;
-        const int DEFAULT_PORT = 3855;
-
-        static void DrawMainWindow(ref bool isJoin, ref bool isCreate, ref bool isMain, ref bool isCreateJoin)
-        {
-            BeginDrawing();
-
-            // Constantes
-            const int BTH_WIDTH = 425, BTN_HEIGHT = 75, FONT_SIZE = 25;
-
-            // Contenue des Texts
-            const string JoinText = "Rejoindre un Serveur", CreateJoinText = "Créer un Serveur et rejoindre", CreateText = "Créer un Serveur", NomDuJeu = "Bienvenue !";
-
-            // Boutons (Rectangle)
-            Rectangle Join = new(GetScreenWidth() / 2 - BTH_WIDTH / 2, (GetScreenHeight() - 500 - 3 * BTN_HEIGHT) / 4 + 300, BTH_WIDTH, BTN_HEIGHT);
-            Rectangle CreateJoin = new(GetScreenWidth() / 2 - BTH_WIDTH / 2, 2 * (GetScreenHeight() - 500 - 3 * BTN_HEIGHT) / 4 + BTN_HEIGHT + 300, BTH_WIDTH, BTN_HEIGHT);
-            Rectangle Create = new(GetScreenWidth() / 2 - BTH_WIDTH / 2, 3 * (GetScreenHeight() - 500 - 3 * BTN_HEIGHT) / 4 + 2 * BTN_HEIGHT + 300, BTH_WIDTH, BTN_HEIGHT);
-
-            // Dessiner les boutons (Dessiner les rectangle)
-            DrawRectangleRec(Join, Color.DarkGray);
-            DrawRectangleRec(CreateJoin, Color.DarkGray);
-            DrawRectangleRec(Create, Color.DarkGray);
-
-            // Dessiner les Texts
-            DrawText(NomDuJeu, GetScreenWidth() / 2 - MeasureText(NomDuJeu, FONT_SIZE * 8) / 2, 100, FONT_SIZE * 8, Color.Black);
-            DrawText(JoinText, Convert.ToInt32(Join.X + Join.Width/2 - MeasureText(JoinText, FONT_SIZE)/2), Convert.ToInt32(Join.Y + Join.Height/2 - FONT_SIZE/2) ,FONT_SIZE, Color.White);
-            DrawText(CreateJoinText, Convert.ToInt32(CreateJoin.X + CreateJoin.Width / 2 - MeasureText(CreateJoinText, FONT_SIZE) / 2), Convert.ToInt32(CreateJoin.Y + CreateJoin.Height/2 - FONT_SIZE / 2), FONT_SIZE, Color.White);
-            DrawText(CreateText, Convert.ToInt32(Create.X + Create.Width / 2 - MeasureText(CreateText, FONT_SIZE) / 2), Convert.ToInt32(Create.Y + Create.Height/2 - FONT_SIZE / 2), FONT_SIZE, Color.White);
-
-            if (CheckCollisionPointRec(GetMousePosition(), Join) || CheckCollisionPointRec(GetMousePosition(), CreateJoin) || CheckCollisionPointRec(GetMousePosition(), Create))
-            {
-                SetMouseCursor(MouseCursor.PointingHand);
-                if (CheckCollisionPointRec(GetMousePosition(), Join) && IsMouseButtonPressed(MouseButton.Left))
-                {
-                    isJoin = true;
-                    isMain = false;
-                }
-                else if (CheckCollisionPointRec(GetMousePosition(), CreateJoin) && IsMouseButtonPressed(MouseButton.Left))
-                {
-                    isCreateJoin = true;
-                    isMain = false;
-                }
-                else if (CheckCollisionPointRec(GetMousePosition(), Create) && IsMouseButtonPressed(MouseButton.Left))
-                {
-                    isCreate = true;
-                    isMain = false;
-                }
-            }
-            else
-            {
-                SetMouseCursor(MouseCursor.Default);
-            }
-
-
-            
-
-            EndDrawing();
-        }
-
-        static void DrawCreateWindow(ref bool isCreateing)
-        {
-            Server.StartServer(DEFAULT_PORT);
-            isCreateing = false;
-            CloseWindow();
-        }
-
-        static void JoinWindow(ref bool isJoing, ref bool isMain)
-        {
-            string ip = "";
-            int letterCount = 0;
-
-            Rectangle textBox = new Rectangle(GetScreenWidth() / 2 - 500, GetScreenHeight() / 2 - 25, 1000, 50);
-
-            int framesCounter = 0;
-
-            while (!IsKeyPressed(KeyboardKey.Enter) && !WindowShouldClose())
-            {
-                // Récupérer le caractère pressé
-                int key = Raylib.GetCharPressed();
-
-                // Vérifie s'il y a d'autres caractères dans la file d'attente
-                while (key > 0 && !WindowShouldClose())
-                {
-                    // Seuls les caractères dans la plage [32..125] sont acceptés
-                    if (key >= 32 && key <= 125 && letterCount < MAX_INPUT_CHARS)
-                    {
-                        ip += (char)key; // Ajouter le caractère à la chaîne
-                        letterCount++;
-                    }
-
-                    key = Raylib.GetCharPressed();  // Vérifie le prochain caractère dans la file d'attente
-                }
-                // Si la touche BACKSPACE est pressée
-                if (Raylib.IsKeyPressed(KeyboardKey.Backspace))
-                {
-                    if (letterCount > 0)
-                    {
-                        letterCount--;
-                        ip = ip.Substring(0, letterCount);  // Supprimer le dernier caractère
-                    }
-                }
-                else if (CheckCollisionPointRec(GetMousePosition(), textBox))
-                    SetMouseCursor(MouseCursor.IBeam);
-                else
-                {
-                    Raylib.SetMouseCursor(MouseCursor.Default);
-                }
-
-                framesCounter++;
-
-
-
-                BeginDrawing();
-                ClearBackground(Color.RayWhite);
-                Raylib.DrawText("ENTREZ L'ADRESSE DU SERVEUR", GetScreenWidth() / 2 - MeasureText("ENTREZ L'ADRESSE DU SERVEUR", 20) / 2, GetScreenHeight() / 2 - 100 /2, 20, Color.Gray);
-
-                Raylib.DrawRectangleRec(textBox, Color.LightGray);
-
-                Raylib.DrawRectangleLines((int)textBox.X, (int)textBox.Y, (int)textBox.Width, (int)textBox.Height, Color.Red);
-
-
-                Raylib.DrawText(ip, (int)textBox.X + 5, (int)textBox.Y + 8, 40, Color.Maroon);
-
-                Raylib.DrawText($"INPUT CHARS: {letterCount}/{MAX_INPUT_CHARS}", GetScreenWidth() / 2 - MeasureText($"INPUT CHARS: {letterCount}/{MAX_INPUT_CHARS}", 20) / 2, GetScreenHeight()/2 - 20/2 + 50, 20, Color.DarkGray);
-
-
-                if (letterCount < MAX_INPUT_CHARS)
-                {
-                    // Affiche un soulignement clignotant lorsque le texte peut encore être saisi
-                    if ((framesCounter / 20) % 2 == 0)
-                        Raylib.DrawText("_", (int)textBox.X + 8 + Raylib.MeasureText(ip, 40), (int)textBox.Y + 12, 40, Color.Maroon);
-                }
-                else
-                {
-                    Raylib.DrawText("Press BACKSPACE to delete chars...", GetScreenWidth() / 2 - MeasureText("Press BACKSPACE to delete chars...", 20) / 2, GetScreenHeight()/2 - 500, 20, Color.Gray);
-                }
-
-
-                EndDrawing();
-                if (IsKeyPressed(KeyboardKey.Enter))
-                {
-
-                    Client.StartClient(ip, DEFAULT_PORT);
-                    isJoing = false;
-                    isJoing = false;
-
-
-                }
-
-            }
-
-            isJoing = false;
-        }
-            
-
-        static void DrawCreateJoin()
-        {
-            Server.StartServer(DEFAULT_PORT);
-            Client.StartClient("127.0.0.1", DEFAULT_PORT);
-        }
-
+        public const int DEFAULT_PORT = 3855;
+        
         static void Main(string[] args)
         {
+            Launcher.Init();
 
-            // Initialisation de la fenêtre Raylib
-            InitWindow(GetScreenWidth(), GetScreenHeight(), "Launcher");
-            Raylib.SetTargetFPS(60);  // Définir la fréquence des images à 60
+#region Commentaires qui font peur a moi /!\ Danger ne pas ouvrir
 
-            bool Create = false, Join = false, Main = true, CreateJoin = false;
+            
 
-            while (!WindowShouldClose())
-            {
-                ClearBackground(Color.RayWhite);
-                if (Create)
-                {
-                    DrawCreateWindow(ref Create);
-                }
-                else if (Join)
-                {
-                    JoinWindow(ref Join, ref Main);
-                }
-                else if (Main)
-                {
-                    DrawMainWindow(ref Join, ref Create, ref Main, ref CreateJoin);
-                }
-                else if (CreateJoin)
-                {
-                    DrawCreateJoin();
-                }
-                else
-                {
-                    CloseWindow();
-                }
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            
             //const int MAX_INPUT_CHARS = 9;
 
             //// Initialization
@@ -479,17 +282,7 @@ namespace DeadOpsArcade3D
 
             //    return currentInput;
             //}
-
-
-
-
-
-
-
-
-
-
-
+            
             //1
             //while (!WindowShouldClose())
             //{
@@ -642,6 +435,7 @@ namespace DeadOpsArcade3D
             //    Server.StartServer(port);
             //    Client.StartClient(host, port);
             //}
+#endregion 
         }
     }
 

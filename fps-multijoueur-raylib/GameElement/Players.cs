@@ -128,8 +128,8 @@ namespace DeadOpsArcade3D.GameElement
                     IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED,
                     0.0f),
                 new Vector3(
-                    GetMouseDelta().X * GameLoop.sensibilité,
-                    GetMouseDelta().Y * GameLoop.sensibilité,
+                    GetMouseDelta().X * GameLoop.Sensibilite,
+                    GetMouseDelta().Y * GameLoop.Sensibilite,
                     0.0f),
                 0f);
 
