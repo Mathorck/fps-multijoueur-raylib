@@ -37,4 +37,3 @@ Fahme Elias
 Mazyad Hussein        
 Mazyad Mehdy       
 Monnier Mathéo        
-Calame Quentin     
