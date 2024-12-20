@@ -1,6 +1,7 @@
 ﻿using static Raylib_cs.Raylib;
 using System.Numerics;
 using DeadOpsArcade3D.Game;
+using DeadOpsArcade3D.Multiplayer;
 using Raylib_cs;
 
 namespace DeadOpsArcade3D.GameElement
@@ -10,6 +11,9 @@ namespace DeadOpsArcade3D.GameElement
         const float JUMP_HEIGHT = 5f;
         const float JUMP_SPEED = 15f;
         const float PLAYER_SPEED = 0.1f;
+
+        /// <summary>Liste des qui contient tous les joueurs </summary>
+        public static List<Player> PlayerList = new List<Player>();
 
         public static Model DefaultModel;
         public static bool isJumping = false;
@@ -35,16 +39,37 @@ namespace DeadOpsArcade3D.GameElement
             Rotation = new Vector3(xRot, yRot, zRot);
         }
 
+        public static void DrawAll(List<Player> playerList)
+        {
+            if (playerList == null || playerList.Count == 0)
+            {
+                Client.ConsoleError("La liste des joueurs est vide ou null.");
+                return;
+            }
+            try
+            {
+                for (int i = 0; i < playerList.Count; i++)
+                {
+                    playerList[i].Draw();
+                }
+            }
+            catch (Exception e)
+            {
+                Client.ConsoleError($"Error: {e.Message}");
+            }
+
+        }
+
         /// <summary>
         /// Permet l'affichage de tous les Joueurs
         /// </summary>
         /// <param name="playerList">Liste des Joueurs</param>
-        public void Draw(List<Player> playerList)
+        public void Draw()
         {
             // TODO: Gèrer l'orientation
             DrawModel(
                 DefaultModel, 
-                Position with { Y = Position.Y - 2 }, 
+                Position - new Vector3(0,2,0), 
                 0.1f, 
                 Color.DarkGray
             );

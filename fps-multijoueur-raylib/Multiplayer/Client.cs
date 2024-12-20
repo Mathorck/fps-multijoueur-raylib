@@ -8,11 +8,9 @@ namespace DeadOpsArcade3D.Multiplayer
 {
     class Client
     {
+        private static bool sendFire = false;
         private static TcpClient client;
         public static NetworkStream stream { get; private set; }
-        //private static Model alien = LoadModel("ressources/model3d/alien/alien.obj");
-        // private static Dictionary<int, (float x, float y, float z, float xRot, float yRot, float zRot)> otherPlayers = new Dictionary<int, (float x, float y, float z, float xRot, float yRot, float zRot)>();
-        private static List<Player> playerList = new List<Player>();
 
         /// <summary>
         /// Cela démmarre le Jeu 
@@ -38,6 +36,7 @@ namespace DeadOpsArcade3D.Multiplayer
         /// <exception cref="ArgumentException">Ce n'est pas censé arriver</exception>
         private static void ReceiveMessages()
         {
+            Weapon Default = new Weapon();
             byte[] buffer = new byte[256];
             while (true)
             {
@@ -49,7 +48,7 @@ namespace DeadOpsArcade3D.Multiplayer
 
                     // Mise à jour des positions des autres joueurs
                     //otherPlayers.Clear();
-                    playerList.Clear();
+                    Player.PlayerList.Clear();
                     string[] tempTbl = message.Split("/");
                     string[] allPositions = tempTbl[0].Split(';');
                     for (int i = 0; i < allPositions.Length; i++)
@@ -58,7 +57,7 @@ namespace DeadOpsArcade3D.Multiplayer
                         {
                             allPositions[i] = allPositions[i].Replace("[", "").Replace("]", "");
                             string[] parts = allPositions[i].Split(',');
-                            if (parts.Length == 7)
+                            if (parts.Length == 8)
                             {
                                 if (!int.TryParse(parts[0], out int id))
                                     throw new ArgumentException("Erreur");
@@ -81,7 +80,13 @@ namespace DeadOpsArcade3D.Multiplayer
                                 if (!float.TryParse(parts[6], out float Zrot))
                                     throw new ArgumentException("Erreur");
 
-                                playerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot));
+                                if (!bool.TryParse(parts[7], out bool Fired))
+                                    throw new ArgumentException("Erreur");
+
+                                Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot));
+
+                                if (Fired)
+                                    Bullet.BulletsList.Add(new Bullet(new(X,Y,Z),new( Xrot, Yrot,Zrot),Default));
                                 //otherPlayers.Add(id, (X, Y, Z, Xrot, Yrot, Zrot));
                             }
                         }
@@ -101,9 +106,27 @@ namespace DeadOpsArcade3D.Multiplayer
         /// <param name="camera">toutes les info du joueur</param>
         public static void SendInfo(Camera3D camera)
         {
-            string position = camera.Position.X + "," + camera.Position.Y + "," + camera.Position.Z + "," + camera.Target.X + "," + camera.Target.Y + "," + camera.Target.Z;
+            string position = camera.Position.X + "," + camera.Position.Y + "," + camera.Position.Z + "," + camera.Target.X + "," + camera.Target.Y + "," + camera.Target.Z + "," + sendFire;
+            sendFire = false;
             byte[] data = Encoding.UTF8.GetBytes(position);
-            Client.stream.Write(data, 0, data.Length);
+            stream.Write(data, 0, data.Length);
+        }
+
+        public static void Fire()
+        {
+            sendFire = true;
+        }
+
+
+        /// <summary>
+        /// Crée un message d'erreur dans la console
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ConsoleError(string message)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Error: {message}");
+            Console.ForegroundColor = ConsoleColor.White;
         }
     }
 }
