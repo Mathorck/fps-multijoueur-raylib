@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "ra0J8Vs7L9A=",
+  "dgSpecHash": "X5I/eWwcSeOh5cKGkKEHbUbH99DH+Ecf3yw6ueXfbSk5zrzsvkACIC4JXwC7PKeU1POmQ3jlWue+6B1VY9TWAQ==",
   "success": true,
   "projectFilePath": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\monnierm\\.nuget\\packages\\raylib-cs\\6.1.1\\raylib-cs.6.1.1.nupkg.sha512",
-    "C:\\Users\\monnierm\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
+    "C:\\Users\\Fahmee\\.nuget\\packages\\raylib-cs\\6.1.1\\raylib-cs.6.1.1.nupkg.sha512",
+    "C:\\Users\\Fahmee\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
   ],
   "logs": []
 }

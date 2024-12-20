@@ -11,6 +11,7 @@ public static class GameLoop
     private static Camera3D camera;
     
     private static Weapon weapon = new Weapon();
+    private static Vector3 movement = new Vector3();
     
     /// <summary>Variable qui dit si la fenêtre devrait se fermer </summary>
     private static bool ferme = false;
