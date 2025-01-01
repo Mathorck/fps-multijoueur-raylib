@@ -8,9 +8,10 @@ namespace DeadOpsArcade3D.GameElement
 {
     public class Player
     {
-        const float JUMP_HEIGHT = 5f;
-        const float JUMP_SPEED = 0.2f;
-        const float PLAYER_SPEED = 0.1f;
+        public const float JUMP_HEIGHT = 4f;
+        public const float JUMP_SPEED = 0.3f;
+        public const float PLAYER_SPEED = 0.1f;
+        public const float SPRINT_SPEED = 0.2f;
 
         public static Ray RayA;
         public static Ray RayD;
@@ -35,7 +36,7 @@ namespace DeadOpsArcade3D.GameElement
         public Vector3 Size;
         public float Speed;
         public float Life;
-        public BoundingBox BoundingBox;
+        public BoundingBox HitBox;
 
         public Player(float x, float y, float z, float xRot, float yRot, float zRot)
         {
@@ -43,7 +44,7 @@ namespace DeadOpsArcade3D.GameElement
             Size = GetModelBoundingBox(DefaultModel).Max * 0.3f;
             Speed = 1f;
             Life = 100f;
-            BoundingBox = new BoundingBox(Position, Size);
+            HitBox = new BoundingBox(Position, Size);
             Rotation = new Vector3(xRot, yRot, zRot);
         }
 
@@ -107,6 +108,7 @@ namespace DeadOpsArcade3D.GameElement
         /// <param name="camera"></param>
         public static void Movement(ref Camera3D camera)
         {
+            Gui.DebugContent.Add($"Position: [{float.Round(camera.Position.X, 2)} | {float.Round(camera.Position.Y, 2)} | {float.Round(camera.Position.Z, 2)}]");
             canJump = false;
             canFall = true;
             
@@ -118,47 +120,19 @@ namespace DeadOpsArcade3D.GameElement
             RayDown = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, -1, 0));
             
             Vector3 deplacement = new Vector3();
+            Vector3 initialTarget = camera.Target - camera.Position;
             
-            deplacement.X = IsKeyDown(KeyboardKey.W) * PLAYER_SPEED - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
+            float speed = IsKeyDown(KeyboardKey.LeftShift) ? SPRINT_SPEED : PLAYER_SPEED;
+            
+            deplacement.X = IsKeyDown(KeyboardKey.W) * speed - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
             deplacement.Y = IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED;
 
             foreach (BoundingBox obstacle in Map.Obstacles)
             {
-                Gui.DebugContent.Add("Obstacle : " + obstacle.Max + " " + obstacle.Min);
-                
-                RayCollision collisionW = GetRayCollisionBox(RayW, obstacle);
-                if (collisionW.Hit && float.Round(collisionW.Distance,1) <= 0.9f)
-                {
-                    camera.Position.Z += PLAYER_SPEED;
-                    deplacement.X = 0;
-                    deplacement.Y = 0;
-                }
-                
-                RayCollision collisionS = GetRayCollisionBox(RayS, obstacle);
-                if (collisionS.Hit && float.Round(collisionS.Distance, 1) <= 0.9f )
-                {
-                    camera.Position.Z -= PLAYER_SPEED;
-                    deplacement.X = 0;
-                    deplacement.Y = 0;
-                }
-                
-                
-                RayCollision collisionD = GetRayCollisionBox(RayD, obstacle);
-                if (collisionD.Hit && float.Round(collisionD.Distance, 1) <= 0.9f )
-                {
-                    camera.Position.X -= PLAYER_SPEED;
-                    deplacement.X = 0;
-                    deplacement.Y = 0;
-                }
-                
-                
-                RayCollision collisionA = GetRayCollisionBox(RayA, obstacle);
-                if (collisionA.Hit && float.Round(collisionA.Distance, 1) <= 0.9f )
-                {
-                    camera.Position.X += PLAYER_SPEED;
-                    deplacement.X = 0;
-                    deplacement.Y = 0;
-                }
+                NormalCollision(ref camera.Position.Z,speed, ref deplacement, RayW, obstacle);
+                NormalCollision(ref camera.Position.Z,-speed, ref deplacement, RayS, obstacle);
+                NormalCollision(ref camera.Position.X,-speed, ref deplacement, RayD, obstacle);
+                NormalCollision(ref camera.Position.X,speed, ref deplacement, RayA, obstacle);
                     
                 RayCollision collisionDown = GetRayCollisionBox(RayDown, obstacle);
                 if (collisionDown.Hit && float.Round(collisionDown.Distance, 1) <= 0.9f)
@@ -166,24 +140,12 @@ namespace DeadOpsArcade3D.GameElement
                     canJump = true;
                     canFall = false;
                 }
+                
+                //Le plafond n'est pas encore fait
             }
-            
-            if (canJump && !isJumping && IsKeyPressed(KeyboardKey.Space))
-                isJumping = true;
-            
-            if (isJumping)
-            {
-                camera.Position.Y += JUMP_SPEED;
-                jump += JUMP_SPEED;
-                if (jump >= JUMP_HEIGHT)
-                {
-                    isJumping = false;
-                    jump = 0;
-                }
-            }
-            
-            if (canFall && !isJumping)
-                camera.Position.Y -= PLAYER_SPEED;
+            Jumping(ref camera);
+
+            camera.Target = camera.Position + initialTarget;
             
             // Mise a jour de la caméra (Déplacement)
             UpdateCameraPro(ref camera,
@@ -194,6 +156,58 @@ namespace DeadOpsArcade3D.GameElement
                     0.0f),
                 0f
             );
+        }
+
+        /// <summary>
+        /// Cette méthode permet de gérer les collisions normales donc pour l'axe X et Z
+        /// </summary>
+        /// <remarks>
+        /// Créé pour le DRY (Don't Repeat Yourself)
+        /// </remarks>
+        /// <param name="positionToUpdate">Position de la caméra en dur</param>
+        /// <param name="speed">la vitesse positive ou négative</param>
+        /// <param name="deplacement">Variable déplacement</param>
+        /// <param name="rayCast"></param>
+        /// <param name="obstacle"></param>
+        private static void NormalCollision(ref float positionToUpdate, float speed, ref Vector3 deplacement, Ray rayCast, BoundingBox obstacle)
+        {
+            RayCollision collision = GetRayCollisionBox(rayCast, obstacle);
+            if (collision.Hit && float.Round(collision.Distance,1) <= 0.9f)
+            {
+                positionToUpdate += speed;
+                deplacement.X = 0;
+                deplacement.Y = 0;
+            }
+        }
+
+        /// <summary>
+        /// Méthode qui gère le saut et la chute du joueur
+        /// </summary>
+        /// <param name="camera"></param>
+        private static void Jumping(ref Camera3D camera)
+        {
+            if (canJump && !isJumping && IsKeyDown(KeyboardKey.Space))
+                isJumping = true;
+            
+            if (isJumping)
+            {
+                float jumpProgress = jump / JUMP_HEIGHT;
+                float jumpVelocity = JUMP_SPEED * (1f - jumpProgress + 0.1f);
+                camera.Position.Y += jumpVelocity;
+                jump += jumpVelocity;
+                if (jump >= JUMP_HEIGHT)
+                {
+                    isJumping = false;
+                    jump = 0;
+                }
+            }
+            else if (canFall && !isJumping)
+            {
+                float fallProgress = jump / JUMP_HEIGHT;
+                float fallVelocity = JUMP_SPEED * (fallProgress + 0.1f);
+                camera.Position.Y -= fallVelocity;
+                jump += fallVelocity;
+            }
         }
     }
 }
