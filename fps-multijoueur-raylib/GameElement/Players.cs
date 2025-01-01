@@ -9,7 +9,7 @@ namespace DeadOpsArcade3D.GameElement
     public class Player
     {
         const float JUMP_HEIGHT = 5f;
-        const float JUMP_SPEED = 15f;
+        const float JUMP_SPEED = 0.2f;
         const float PLAYER_SPEED = 0.1f;
 
         public static Ray RayA;
@@ -23,9 +23,10 @@ namespace DeadOpsArcade3D.GameElement
         public static List<Player> PlayerList = new List<Player>();
 
         public static Model DefaultModel;
-        public static bool isJumping = false;
-        public static bool isGoingUp = false;
-        public static float initpos = 0;
+        private static bool canJump = true;
+        private static bool canFall = true;
+        private static bool isJumping = false;
+        private static float jump = 0;
 
 
         public Vector3 Position;
@@ -106,6 +107,9 @@ namespace DeadOpsArcade3D.GameElement
         /// <param name="camera"></param>
         public static void Movement(ref Camera3D camera)
         {
+            canJump = false;
+            canFall = true;
+            
             RayW = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, 0, -1));
             RayS = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, 0, 1));
             RayD = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(1, 0, 0));
@@ -120,56 +124,67 @@ namespace DeadOpsArcade3D.GameElement
 
             foreach (BoundingBox obstacle in Map.Obstacles)
             {
-                RayCollision collisionW = GetRayCollisionBox(RayW, obstacle);
-                if (collisionW.Hit && collisionW.Distance <= 1f)
-                    deplacement.X -= PLAYER_SPEED;
-                if (collisionW.Hit)
-                    Gui.DebugContent.Add("Collision W : " + collisionW.Distance);
+                Gui.DebugContent.Add("Obstacle : " + obstacle.Max + " " + obstacle.Min);
                 
+                RayCollision collisionW = GetRayCollisionBox(RayW, obstacle);
+                if (collisionW.Hit && float.Round(collisionW.Distance,1) <= 0.9f)
+                {
+                    camera.Position.Z += PLAYER_SPEED;
+                    deplacement.X = 0;
+                    deplacement.Y = 0;
+                }
                 
                 RayCollision collisionS = GetRayCollisionBox(RayS, obstacle);
-                if (collisionS.Hit && collisionS.Distance <= 1f )
-                    deplacement.X -= PLAYER_SPEED;
-                if (collisionS.Hit)
-                    Gui.DebugContent.Add("Collision S : " + (collisionS.Distance));
+                if (collisionS.Hit && float.Round(collisionS.Distance, 1) <= 0.9f )
+                {
+                    camera.Position.Z -= PLAYER_SPEED;
+                    deplacement.X = 0;
+                    deplacement.Y = 0;
+                }
+                
                 
                 RayCollision collisionD = GetRayCollisionBox(RayD, obstacle);
-                if (collisionD.Hit && collisionD.Distance <= 1f )
-                    deplacement.Y -= PLAYER_SPEED;
-                if (collisionD.Hit)
-                    Gui.DebugContent.Add("Collision S : " + (collisionD.Distance));
+                if (collisionD.Hit && float.Round(collisionD.Distance, 1) <= 0.9f )
+                {
+                    camera.Position.X -= PLAYER_SPEED;
+                    deplacement.X = 0;
+                    deplacement.Y = 0;
+                }
                 
-                /*w
+                
                 RayCollision collisionA = GetRayCollisionBox(RayA, obstacle);
-                if (collisionA.Hit && collisionA.Distance <= 1f )
-                    deplacement.Y -= PLAYER_SPEED;
-                if (collisionA.Hit)
-                    Gui.DebugContent.Add("Collision S : " + (collisionA.Distance));
-                
-                
-                /*
-                RayCollision collisionD = GetRayCollisionBox(RayD, obstacle);
-                if (collisionD.Hit && collisionD.Distance <= 1f )
-                    deplacement.Y += -PLAYER_SPEED;
-
-                RayCollision collisionA = GetRayCollisionBox(RayA, obstacle);
-                if (collisionA.Hit && collisionA.Distance <= 1f )
-                    deplacement.Y += PLAYER_SPEED;
-                    */
-                Console.WriteLine("");
-                Console.WriteLine(collisionW.Distance /*+ ", "+ collisionS.Distance /*+ ", "+ collisionD.Distance+", "+ collisionA.Distance+""*/);
-                Console.WriteLine("");
+                if (collisionA.Hit && float.Round(collisionA.Distance, 1) <= 0.9f )
+                {
+                    camera.Position.X += PLAYER_SPEED;
+                    deplacement.X = 0;
+                    deplacement.Y = 0;
+                }
                     
-/*   
                 RayCollision collisionDown = GetRayCollisionBox(RayDown, obstacle);
-                if (collisionDown.Hit && collisionDown.Distance <= 0.4f)
-                    deplacement.Z += PLAYER_SPEED;
-                else 
-                    deplacement.Z -= PLAYER_SPEED;
-                */
-                
+                if (collisionDown.Hit && float.Round(collisionDown.Distance, 1) <= 0.9f)
+                {
+                    canJump = true;
+                    canFall = false;
+                }
             }
-
+            
+            if (canJump && !isJumping && IsKeyPressed(KeyboardKey.Space))
+                isJumping = true;
+            
+            if (isJumping)
+            {
+                camera.Position.Y += JUMP_SPEED;
+                jump += JUMP_SPEED;
+                if (jump >= JUMP_HEIGHT)
+                {
+                    isJumping = false;
+                    jump = 0;
+                }
+            }
+            
+            if (canFall && !isJumping)
+                camera.Position.Y -= PLAYER_SPEED;
+            
             // Mise a jour de la caméra (Déplacement)
             UpdateCameraPro(ref camera,
                 deplacement,

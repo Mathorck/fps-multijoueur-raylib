@@ -7,8 +7,8 @@ namespace DeadOpsArcade3D.Game;
 
 public static class Map
 {
-    //public static BoundingBox Ground = new BoundingBox(new Vector3(-32.0f, 0f, -32.0f), new Vector3(32.0f, 1f, 32.0f));
-    public static List<BoundingBox> Obstacles = new List<BoundingBox>
+    public static BoundingBox Ground = new BoundingBox(new Vector3(-32.0f, 0f, -32.0f), new Vector3(32.0f, 1f, 32.0f));
+    public static readonly List<BoundingBox> Obstacles = new List<BoundingBox>
     {
         // Objets définis avec leurs BoundingBox respectifs
         new BoundingBox(new Vector3(1.0f, 0.0f, 1.0f), new Vector3(3.0f, 2.0f, 3.0f)), // Premier cube
@@ -48,11 +48,9 @@ public static class Map
         Raylib.DrawCube(new Vector3(32.0f, 1.0f, 0.0f), 1.0f, 10.0f, 64.0f, Color.DarkGray);
 
 
-        foreach(BoundingBox bb in Obstacles)
+        foreach (BoundingBox bb in Obstacles)
         {
             Raylib.DrawBoundingBox(bb,Color.Red);
         }
-
-        Player.DrawRays();
     }
 }
