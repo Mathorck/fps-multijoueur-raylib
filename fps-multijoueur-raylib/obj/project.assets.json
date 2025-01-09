@@ -132,11 +132,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\FPS\\fps-multijoueur-raylib\\Squelette.csproj",
+      "projectUniqueName": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Squelette.csproj",
       "projectName": "Squelette",
-      "projectPath": "F:\\FPS\\fps-multijoueur-raylib\\Squelette.csproj",
+      "projectPath": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Squelette.csproj",
       "packagesPath": "C:\\Users\\mazyadmm\\.nuget\\packages\\",
-      "outputPath": "F:\\FPS\\fps-multijoueur-raylib\\obj\\",
+      "outputPath": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

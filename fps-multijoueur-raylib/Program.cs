@@ -27,7 +27,32 @@ namespace DeadOpsArcade3D
             camera.FovY = 60.0f;
             camera.Projection = CameraProjection.Perspective;
 
-            
+            #region static character
+
+            //Initialisation des models 3d
+            //
+            // .obj (Model 3d static uniquement)
+            //
+
+            //Oiseau
+            Model bird = LoadModel("ressources/model3d/bird/bird.obj");
+            Vector3 birdPosition = new Vector3(5f, 0, 0);
+            Texture2D birdTexture = LoadTexture("ressources/model3d/bird/bird.png");
+            BoundingBox birdBox = GetMeshBoundingBox(bird.Meshes[0]);
+            bird.Materials[0].Maps[(int)MaterialMapIndex.Diffuse].Texture = birdTexture;
+
+
+            //Robo
+            Model robo = LoadModel("ressources/model3d/robo/source/robo.obj");
+            Vector3 roboPosition = new Vector3(-5f, 0, 0);
+            Texture2D roboTexture = LoadTexture("ressources/model3d/robo/textures/robo.png");
+            BoundingBox roboBox = GetMeshBoundingBox(robo.Meshes[0]);
+            robo.Materials[0].Maps[(int)MaterialMapIndex.Diffuse].Texture = roboTexture;
+
+            //
+            // .gltf (Model 3d qui peuvent techniquement avoir des animations)
+            //
+            #endregion
 
             #region character avec animations
             // Load gltf model animations
@@ -134,7 +159,9 @@ namespace DeadOpsArcade3D
 
                 #region draw model
 
-                //Dessiner les moodel 3d sur la map          
+                //Dessiner les moodel 3d sur la map
+                DrawModel(bird, birdPosition, 0.2f, Color.DarkGray);
+                DrawModel(robo, roboPosition, 0.2f, Color.DarkGray);
                 DrawModel(character, characterPositioin, 1f, Color.DarkGray);
                 DrawModel(greenMan, greenManPositioin, 1f, Color.DarkGray);
                 #endregion
@@ -151,6 +178,10 @@ namespace DeadOpsArcade3D
             //
             //Unload
             //
+            UnloadTexture(birdTexture);
+            UnloadModel(bird);
+            UnloadTexture(roboTexture);
+            UnloadModel(robo);
             UnloadModel(character);
             UnloadModel(greenMan);
             #endregion
