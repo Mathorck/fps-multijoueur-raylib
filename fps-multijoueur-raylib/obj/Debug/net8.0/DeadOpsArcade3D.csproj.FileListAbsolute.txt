@@ -121,3 +121,8 @@ G:\Raylib\Multi fps\fps-multijoueur-raylib\fps-multijoueur-raylib\obj\Debug\net8
 G:\Raylib\Multi fps\fps-multijoueur-raylib\fps-multijoueur-raylib\obj\Debug\net8.0\DeadOpsArcade3D.pdb
 G:\Raylib\Multi fps\fps-multijoueur-raylib\fps-multijoueur-raylib\obj\Debug\net8.0\DeadOpsArcade3D.genruntimeconfig.cache
 G:\Raylib\Multi fps\fps-multijoueur-raylib\fps-multijoueur-raylib\obj\Debug\net8.0\ref\DeadOpsArcade3D.dll
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\ground.png
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\Map.png
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\cubicmap.png
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\cubicmap_atlas.png
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\Under.png

@@ -10,8 +10,8 @@ namespace DeadOpsArcade3D.GameElement
     {
         public const float JUMP_HEIGHT = 4f;
         public const float JUMP_SPEED = 0.3f;
-        public const float PLAYER_SPEED = 0.1f;
-        public const float SPRINT_SPEED = 0.2f;
+        public const float PLAYER_SPEED = 0.05f;
+        public const float SPRINT_SPEED = 0.09f;
 
         public static Ray RayA;
         public static Ray RayD;
@@ -106,18 +106,19 @@ namespace DeadOpsArcade3D.GameElement
         /// Gère le mouvement du joueur principal
         /// </summary>
         /// <param name="camera"></param>
-        public static void Movement(ref Camera3D camera)
+        public static unsafe void Movement(ref Camera3D camera)
         {
-            Gui.DebugContent.Add($"Position: [{float.Round(camera.Position.X, 2)} | {float.Round(camera.Position.Y, 2)} | {float.Round(camera.Position.Z, 2)}]");
+            /*
+            
             canJump = false;
             canFall = true;
             
-            RayW = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, 0, -1));
-            RayS = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, 0, 1));
-            RayD = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(1, 0, 0));
-            RayA = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(-1, 0, 0));
-            RayUp = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, 1, 0));
-            RayDown = new Ray(camera.Position - new Vector3(0,0.5f,0), new Vector3(0, -1, 0));
+            RayW = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(0, 0, -1));
+            RayS = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(0, 0, 1));
+            RayD = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(1, 0, 0));
+            RayA = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(-1, 0, 0));
+            RayUp = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(0, 1, 0));
+            RayDown = new Ray(camera.Position - new Vector3(0,1.5f,0), new Vector3(0, -1, 0));
             
             Vector3 deplacement = new Vector3();
             Vector3 initialTarget = camera.Target - camera.Position;
@@ -135,7 +136,7 @@ namespace DeadOpsArcade3D.GameElement
                 NormalCollision(ref camera.Position.X,speed, ref deplacement, RayA, obstacle);
                     
                 RayCollision collisionDown = GetRayCollisionBox(RayDown, obstacle);
-                if (collisionDown.Hit && float.Round(collisionDown.Distance, 1) <= 0.9f)
+                if (collisionDown.Hit && float.Round(collisionDown.Distance, 1) <= 0.2f)
                 {
                     canJump = true;
                     canFall = false;
@@ -156,28 +157,86 @@ namespace DeadOpsArcade3D.GameElement
                     0.0f),
                 0f
             );
-        }
+            */
 
-        /// <summary>
-        /// Cette méthode permet de gérer les collisions normales donc pour l'axe X et Z
-        /// </summary>
-        /// <remarks>
-        /// Créé pour le DRY (Don't Repeat Yourself)
-        /// </remarks>
-        /// <param name="positionToUpdate">Position de la caméra en dur</param>
-        /// <param name="speed">la vitesse positive ou négative</param>
-        /// <param name="deplacement">Variable déplacement</param>
-        /// <param name="rayCast"></param>
-        /// <param name="obstacle"></param>
-        private static void NormalCollision(ref float positionToUpdate, float speed, ref Vector3 deplacement, Ray rayCast, BoundingBox obstacle)
-        {
-            RayCollision collision = GetRayCollisionBox(rayCast, obstacle);
-            if (collision.Hit && float.Round(collision.Distance,1) <= 0.9f)
+            canJump = false;
+            canFall = true;
+
+            Gui.DebugContent.Add($"Position: [{float.Round(camera.Position.X, 2)} | {float.Round(camera.Position.Y, 2)} | {float.Round(camera.Position.Z, 2)}]");
+
+            Vector3 oldCamPos = camera.Position;
+            Vector3 initialTarget = camera.Target - camera.Position;
+            Vector3 deplacement = new Vector3();
+
+            float speed = IsKeyDown(KeyboardKey.LeftShift) ? SPRINT_SPEED : PLAYER_SPEED;
+
+            deplacement.X = IsKeyDown(KeyboardKey.W) * speed - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
+            deplacement.Y = IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED;
+
+            camera.Up = new Vector3(0, 1, 0);
+
+
+            //Jumping(ref camera);
+
+            // Mise a jour de la caméra (Déplacement)
+            UpdateCameraPro(ref camera,
+                deplacement,
+                new Vector3(
+                    GetMouseDelta().X * GameLoop.sensibilité,
+                    GetMouseDelta().Y * GameLoop.sensibilité,
+                    0.0f),
+                0f
+            );
+
+
+            Vector2 playerPos = new(camera.Position.X, camera.Position.Z);
+
+            int playerCellX = (int)(playerPos.X - Map.mapPosition.X + 0.5f);
+            int playerCellY = (int)(playerPos.Y - Map.mapPosition.Z + 0.5f);
+
+            if (playerCellX < 0)
             {
-                positionToUpdate += speed;
-                deplacement.X = 0;
-                deplacement.Y = 0;
+                playerCellX = 0;
             }
+            else if (playerCellX >= Map.cubicmap.Width)
+            {
+                playerCellX = Map.cubicmap.Width - 1;
+            }
+
+            if (playerCellY < 0)
+            {
+                playerCellY = 0;
+            }
+            else if (playerCellY >= Map.cubicmap.Height)
+            {
+                playerCellY = Map.cubicmap.Height - 1;
+            }
+
+            for (int y = 0; y < Map.cubicmap.Height; y++)
+            {
+                for (int x = 0; x < Map.cubicmap.Width; x++)
+                {
+                    Color* mapPixelsData = Map.MapPixels;
+
+                    // Collision: Color.white pixel, only check R channel
+                    Rectangle rec = new(
+                        Map.mapPosition.X - 0.5f + x * 1.0f,
+                        Map.mapPosition.Z - 0.5f + y * 1.0f,
+                        1.0f,
+                        1.0f
+                    );
+
+                    bool collision = CheckCollisionCircleRec(new Vector2(camera.Position.X, camera.Position.Z), 0.1f, rec);
+                    if ((mapPixelsData[y * Map.cubicmap.Width + x].R == 255) && collision)
+                    {
+                        // Collision detected, reset camera position
+                        camera.Position = oldCamPos;
+                        camera.Target = camera.Position + initialTarget;
+                    }
+                }
+            }
+
+
         }
 
         /// <summary>

@@ -1,4 +1,6 @@
+using DeadOpsArcade3D.GameElement;
 using Raylib_cs;
+using System.Numerics;
 using static Raylib_cs.Raylib;
 
 namespace DeadOpsArcade3D.Game;
@@ -44,5 +46,19 @@ public static class Gui
         }
         DrawText(output, 20, 20,20, Color.Black);
         DebugContent.Clear();
+
+
+        DrawTextureEx(Map.cubicmap, new Vector2(GetScreenWidth() - Map.cubicmap.Width * 4 - 20, 20), 0.0f, 4.0f, Color.White);
+        DrawRectangleLines(GetScreenWidth() - Map.cubicmap.Width * 4 - 20, 20, Map.cubicmap.Width * 4, Map.cubicmap.Height * 4, Color.Green);
+
+        // Draw player position radar
+        Vector2 playerPos = new(GameLoop.camera.Position.X, GameLoop.camera.Position.Z);
+
+        int playerCellX = (int)(playerPos.X - Map.mapPosition.X + 0.5f);
+        int playerCellY = (int)(playerPos.Y - Map.mapPosition.Z + 0.5f);
+
+        DrawRectangle(GetScreenWidth() - Map.cubicmap.Width * 4 - 20 + playerCellX * 4, 20 + playerCellY * 4, 4, 4, Color.Red);
+
+        DrawFPS(10, 10);
     }
 }
