@@ -28,15 +28,13 @@ namespace DeadOpsArcade3D
             camera.Projection = CameraProjection.Perspective;
 
             #region static character
-
             //Initialisation des models 3d
             //
             // .obj (Model 3d static uniquement)
             //
-
             //Oiseau
             Model bird = LoadModel("ressources/model3d/bird/bird.obj");
-            Vector3 birdPosition = new Vector3(5f, 0, 0);
+            Vector3 birdPosition = new Vector3(10f, 0, 0);
             Texture2D birdTexture = LoadTexture("ressources/model3d/bird/bird.png");
             BoundingBox birdBox = GetMeshBoundingBox(bird.Meshes[0]);
             bird.Materials[0].Maps[(int)MaterialMapIndex.Diffuse].Texture = birdTexture;
@@ -48,10 +46,6 @@ namespace DeadOpsArcade3D
             Texture2D roboTexture = LoadTexture("ressources/model3d/robo/textures/robo.png");
             BoundingBox roboBox = GetMeshBoundingBox(robo.Meshes[0]);
             robo.Materials[0].Maps[(int)MaterialMapIndex.Diffuse].Texture = roboTexture;
-
-            //
-            // .gltf (Model 3d qui peuvent techniquement avoir des animations)
-            //
             #endregion
 
             #region character avec animations
@@ -60,7 +54,7 @@ namespace DeadOpsArcade3D
 
             //RoboCharacter
             Model character = LoadModel("ressources/model3d/character/robot.glb");
-            Vector3 characterPositioin = new Vector3(0, 0, 5f);
+            Vector3 characterPositioin = new Vector3(0, 0, 0);
             string fileName = "ressources/model3d/character/robot.glb";
             int animCount = 0;
             int animIndex = 0;
@@ -74,7 +68,7 @@ namespace DeadOpsArcade3D
 
             //GreenMan Character
             Model greenMan = LoadModel("ressources/model3d/character/greenman.glb");
-            Vector3 greenManPositioin = new Vector3(5f, 0, 5f);
+            Vector3 greenManPositioin = new Vector3(5f, 0, 0);
             string greenManfileName = "ressources/model3d/character/greenman.glb";
             int greenMananimCount = 0;
             int greenMananimIndex = 0;
@@ -158,7 +152,6 @@ namespace DeadOpsArcade3D
                 DrawPlane(new Vector3(0.0f, 0.0f, 0.0f), new Vector2(32.0f, 32.0f), Color.LightGray);
 
                 #region draw model
-
                 //Dessiner les moodel 3d sur la map
                 DrawModel(bird, birdPosition, 0.2f, Color.DarkGray);
                 DrawModel(robo, roboPosition, 0.2f, Color.DarkGray);
