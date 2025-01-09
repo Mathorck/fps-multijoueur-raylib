@@ -126,3 +126,4 @@ D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources
 D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\cubicmap.png
 D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\cubicmap_atlas.png
 D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\Under.png
+D:\tmp\fps-multijoueur-raylib\fps-multijoueur-raylib\bin\Debug\net8.0\ressources\textures\ShootGun.png

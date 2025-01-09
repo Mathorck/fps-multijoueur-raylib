@@ -292,6 +292,9 @@
     <None Update="ressources\textures\Map.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="ressources\textures\ShootGun.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ressources\textures\Under.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

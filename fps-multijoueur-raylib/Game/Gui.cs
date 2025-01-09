@@ -1,6 +1,7 @@
 using DeadOpsArcade3D.GameElement;
 using Raylib_cs;
 using System.Numerics;
+using System.Xml.Serialization;
 using static Raylib_cs.Raylib;
 
 namespace DeadOpsArcade3D.Game;
@@ -8,11 +9,19 @@ namespace DeadOpsArcade3D.Game;
 public static class Gui
 {
     public static List<string> DebugContent = new();
+    private static Texture2D wepon;
+
+    public static void Init()
+    {
+        wepon = LoadTexture("./ressources/textures/ShootGun.png");
+    }
+
     /// <summary>
     /// Affiche le GUI
     /// </summary>
     public static void Render()
     {
+        Weapon();
         Crossair();
         Debug();
     }
@@ -60,5 +69,10 @@ public static class Gui
         DrawRectangle(GetScreenWidth() - Map.cubicmap.Width * 4 - 20 + playerCellX * 4, 20 + playerCellY * 4, 4, 4, Color.Red);
 
         DrawFPS(10, 10);
+    }
+
+    private static void Weapon()
+    {
+        Raylib.DrawTexture(wepon, (GetScreenWidth() - wepon.Width) / 2 +100, GetScreenHeight() - wepon.Height, Color.White);
     }
 }
