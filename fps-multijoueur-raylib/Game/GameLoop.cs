@@ -70,12 +70,16 @@ public static class GameLoop
         // Caméra du joueur
         camera = new Camera3D
         {
-            Position = new Vector3(0.0f, 2.0f, 4.0f),
+            Position = new Vector3(0.2f, 0.4f, 0.2f),
             Target = new Vector3(0.0f, 2.0f, 0.0f),
             Up = new Vector3(0.0f, 1.0f, 0.0f),
             FovY = 60.0f,
             Projection = CameraProjection.Perspective
         };
+
+        // Map
+        Map.Init();
+        Gui.Init();
     }
 
     /// <summary>
@@ -88,6 +92,8 @@ public static class GameLoop
         weapon.Fire(Bullet.BulletsList, camera);
         
         BeginDrawing();
+        ClearBackground(Color.RayWhite);
+
         BeginMode3D(camera);
 
         Map.Render();
