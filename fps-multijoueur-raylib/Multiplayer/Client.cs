@@ -1,8 +1,8 @@
-﻿using DeadOpsArcade3D.GameElement;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 using DeadOpsArcade3D.Game;
 using Raylib_cs;
+using DeadOpsArcade3D.Game.GameElement;
 
 namespace DeadOpsArcade3D.Multiplayer
 {

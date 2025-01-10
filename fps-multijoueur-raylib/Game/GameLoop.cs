@@ -1,8 +1,8 @@
 using System.Numerics;
-using DeadOpsArcade3D.GameElement;
 using DeadOpsArcade3D.Multiplayer;
 using static Raylib_cs.Raylib;
 using Raylib_cs;
+using DeadOpsArcade3D.Game.GameElement;
 
 namespace DeadOpsArcade3D.Game;
 
@@ -58,14 +58,6 @@ public static class GameLoop
     {
         // Modèle utilisé par les joueurs
         Player.DefaultModel = LoadModel("ressources/model3d/alien.obj");
-
-        // Raycast
-        Player.RayW = new Ray(Vector3.One, Vector3.Zero);
-        Player.RayS = new Ray(Vector3.One, Vector3.Zero);
-        Player.RayD = new Ray(Vector3.One, Vector3.Zero);
-        Player.RayA = new Ray(Vector3.One, Vector3.Zero);
-        Player.RayUp = new Ray(Vector3.One, Vector3.Zero);
-        Player.RayDown = new Ray(Vector3.One, Vector3.Zero);
 
         // Caméra du joueur
         camera = new Camera3D

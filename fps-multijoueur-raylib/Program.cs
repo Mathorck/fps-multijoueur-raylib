@@ -1,8 +1,8 @@
-﻿using DeadOpsArcade3D.Game;
-using DeadOpsArcade3D.Multiplayer;
+﻿using DeadOpsArcade3D.Multiplayer;
 
 using static Raylib_cs.Raylib;
 using Raylib_cs;
+using DeadOpsArcade3D.Launcher;
 
 namespace DeadOpsArcade3D
 {
@@ -12,7 +12,8 @@ namespace DeadOpsArcade3D
         
         static void Main(string[] args)
         {
-            Launcher.Init();
+            //Launcher.Init();
+            Login.Start();
 
 #region Commentaires qui font peur a moi /!\ Danger ne pas ouvrir
 

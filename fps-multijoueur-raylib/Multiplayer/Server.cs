@@ -7,6 +7,7 @@ namespace DeadOpsArcade3D.Multiplayer
     class Server
     {
         private static TcpListener server;
+        private static TcpListener ping;
         private static Dictionary<int, TcpClient> clients = new Dictionary<int, TcpClient>();
         private static int clientCounter = 0;
 
@@ -20,7 +21,12 @@ namespace DeadOpsArcade3D.Multiplayer
         {
             server = new TcpListener(IPAddress.Any, port);
             server.Start();
-            Console.WriteLine("Serveur démarré sur le port " + port);
+
+            Client.ConsoleSuccess("Serveur démarré sur le port " + port);
+
+            ping = new TcpListener(IPAddress.Any, port+1);
+            ping.Start();
+
 
             Thread acceptThread = new Thread(AcceptClients);
             acceptThread.Start();
@@ -30,6 +36,8 @@ namespace DeadOpsArcade3D.Multiplayer
         {
             while (true)
             {
+                ping.AcceptTcpClient();
+
                 TcpClient client = server.AcceptTcpClient();
                 clients[clientCounter] = client;
                 //                               | pos | rot |

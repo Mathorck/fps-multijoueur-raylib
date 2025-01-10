@@ -9,10 +9,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="9.1.0" />
     <PackageReference Include="Raylib-cs" Version="6.1.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="LoginInfo\LoginInfo.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ressources\fonts\jupiter_crash.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="ressources\model3d\alien.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -305,6 +312,10 @@
 
   <ItemGroup>
     <Folder Include="ressources\textures\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="LoginInfo\" />
   </ItemGroup>
 
 </Project>
