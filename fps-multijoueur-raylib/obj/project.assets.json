@@ -132,9 +132,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Squelette.csproj",
-      "projectName": "Squelette",
-      "projectPath": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Squelette.csproj",
+      "projectUniqueName": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
+      "projectName": "DeadOpsArcade3D",
+      "projectPath": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
       "packagesPath": "C:\\Users\\mazyadmm\\.nuget\\packages\\",
       "outputPath": "F:\\FPS\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\obj\\",
       "projectStyle": "PackageReference",
