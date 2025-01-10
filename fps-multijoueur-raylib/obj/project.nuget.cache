@@ -1,11 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "zpHbjAtIbJxCq9NsYAO4NcaSHm2mR/EfsqCnd1ROCUf49/4F84H0ghNAURJlmGNso77YBSKU0gbX9KLdlH+0hw==",
+  "dgSpecHash": "ra0J8Vs7L9A=",
   "success": true,
-  "projectFilePath": "D:\\tmp\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
+  "projectFilePath": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\monnierm\\.nuget\\packages\\raylib-cs\\6.1.1\\raylib-cs.6.1.1.nupkg.sha512",
     "C:\\Users\\monnierm\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problème de lecture du fichier cache D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

@@ -8,6 +8,7 @@ namespace DeadOpsArcade3D.GameElement
         public static List<Bullet> BulletsList = new List<Bullet>();
 
         public Vector3 Position;
+        public Vector3 Target;
         public Vector3 Size;
         public Vector3 Direction;
         public float speed;
@@ -16,10 +17,11 @@ namespace DeadOpsArcade3D.GameElement
 
         public Bullet(Vector3 playerPos, Vector3 Direction, Weapon w) 
         { 
-            Position = new Vector3(playerPos.X, playerPos.Y - 0.1f, playerPos.Z);
+            Position = new Vector3(playerPos.X, playerPos.Y - 0.05f, playerPos.Z);
+            Target = new(Direction.X, Direction.Y - 0.05f, Direction.Z);
             Size = new Vector3(0.1f, 0.1f, 0.1f);
-            this.Direction = Vector3.Normalize(Direction - Position);
-            speed = 50.0f;
+            this.Direction = Vector3.Normalize(Target - Position);
+            speed = 100.0f;
             Weapon = w;
             BoundingBox = new BoundingBox(Position, Size);
         }
