@@ -24,6 +24,7 @@ namespace DeadOpsArcade3D.Multiplayer
             Console.WriteLine("Connecté au serveur");
             stream = client.GetStream();
 
+
             Thread receiveThread = new Thread(ReceiveMessages);
             receiveThread.Start();
 
@@ -46,7 +47,7 @@ namespace DeadOpsArcade3D.Multiplayer
                     Console.WriteLine("Message reçu : " + message);
 
                     // Mise à jour des positions des autres joueurs
-                    Player.PlayerList.Clear();
+                    //Player.PlayerList.Clear();
                     string[] tempTbl = message.Split("/");
                     string[] allPositions = tempTbl[0].Split(';');
                     for (int i = 0; i < allPositions.Length; i++)
@@ -81,7 +82,11 @@ namespace DeadOpsArcade3D.Multiplayer
                                 if (!bool.TryParse(parts[7], out bool Fired))
                                     throw new ArgumentException("Erreur");
 
-                                Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot));
+                                if (id > Player.PlayerList.Count-1)
+                                    Player.PlayerList.Add(new(X, Y, Z, Xrot, Yrot, Zrot));
+
+                                Player.PlayerList[id].Position = new(X, Y, Z);
+                                Player.PlayerList[id].Rotation = new(Xrot, Yrot, Zrot);
 
                                 if (Fired)
                                     Bullet.BulletsList.Add(new Bullet(new(X, Y, Z), new(Xrot, Yrot, Zrot), Default)) ;

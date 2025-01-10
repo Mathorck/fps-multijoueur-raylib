@@ -6,6 +6,7 @@ namespace DeadOpsArcade3D.Multiplayer
 {
     class Server
     {
+
         private static TcpListener server;
         private static TcpListener ping;
         private static Dictionary<int, TcpClient> clients = new Dictionary<int, TcpClient>();
@@ -117,5 +118,6 @@ namespace DeadOpsArcade3D.Multiplayer
                 client.GetStream().Write(data, 0, data.Length);
             }
         }
+        
     }
 }
