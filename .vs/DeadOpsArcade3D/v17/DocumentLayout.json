@@ -1,42 +1,42 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\",
+  "WorkspaceRootPath": "D:\\fps-multijoueur-raylib\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\gameelement\\players.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\gameelement\\players.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\multiplayer\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\multiplayer\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\gameelement\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\gameelement\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\game\\map.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\game\\map.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\game\\gameloop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\game\\gameloop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\game\\gui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\game\\gui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\game\\gui.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\gameelement\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\game\\map.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\game\\map.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\gameelement\\players.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\gameelement\\players.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\multiplayer\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\multiplayer\\client.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\gameelement\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\gameelement\\bullet.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\gameelement\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\gameelement\\weapon.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|f:\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib-matheo\\fps-multijoueur-raylib\\multiplayer\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\multiplayer\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\multiplayer\\server.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|d:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\game\\gameloop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A88E1B8C-914F-4DD0-AE0D-A642D73B3F70}|fps-multijoueur-raylib\\DeadOpsArcade3D.csproj|solutionrelative:fps-multijoueur-raylib\\game\\gameloop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,116 +46,125 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 5,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Client.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Multiplayer\\Client.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Multiplayer\\Client.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Multiplayer\\Client.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\Multiplayer\\Client.cs",
-              "ViewState": "AQIAAEAAAAAAAAAAAAAvwFQAAABaAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T14:44:51.335Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Weapon.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\GameElement\\Weapon.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\GameElement\\Weapon.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\GameElement\\Weapon.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\GameElement\\Weapon.cs",
-              "ViewState": "AQIAAAEAAAAAAAAAAAAMwBUAAABJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T14:43:23.425Z"
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Bullet.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\GameElement\\Bullet.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\GameElement\\Bullet.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\GameElement\\Bullet.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\GameElement\\Bullet.cs",
-              "ViewState": "AQIAABYAAAAAAAAAAAAgwC8AAAAgAAAA",
+              "Title": "Players.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\GameElement\\Players.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\GameElement\\Players.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\GameElement\\Players.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\GameElement\\Players.cs",
+              "ViewState": "AQIAAKgAAAAAAAAAAAAWwPYAAAA5AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T14:42:24.242Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Gui.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Game\\Gui.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Game\\Gui.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Game\\Gui.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\Game\\Gui.cs",
-              "ViewState": "AQIAAC8AAAAAAAAAAAAcwCEAAAAqAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T10:54:43.142Z"
+              "WhenOpened": "2024-12-20T07:33:15.016Z",
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Map.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Game\\Map.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Game\\Map.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Game\\Map.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\Game\\Map.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACwAAAArAAAA",
+              "Title": "Client.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Multiplayer\\Client.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Multiplayer\\Client.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Multiplayer\\Client.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\Multiplayer\\Client.cs",
+              "ViewState": "AQIAAJ8AAAAAAAAAAAAkwFQAAABOAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-09T08:10:09.042Z"
+              "WhenOpened": "2025-01-09T14:44:51.335Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Players.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\GameElement\\Players.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\GameElement\\Players.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\GameElement\\Players.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\GameElement\\Players.cs",
-              "ViewState": "AQIAAHAAAAAAAAAAAAAkwFYAAAA9AAAA",
+              "DocumentIndex": 5,
+              "Title": "Weapon.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\GameElement\\Weapon.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\GameElement\\Weapon.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\GameElement\\Weapon.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\GameElement\\Weapon.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABUAAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-20T07:33:15.016Z",
+              "WhenOpened": "2025-01-09T14:43:23.425Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "GameLoop.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Game\\GameLoop.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Game\\GameLoop.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Game\\GameLoop.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\Game\\GameLoop.cs",
-              "ViewState": "AQIAAFQAAAAAAAAAAAAowFsAAAAuAAAA",
+              "Title": "Bullet.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\GameElement\\Bullet.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\GameElement\\Bullet.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\GameElement\\Bullet.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\GameElement\\Bullet.cs",
+              "ViewState": "AQIAABEAAAAAAAAAAAAUwB8AAAAZAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-20T07:32:21.187Z"
+              "WhenOpened": "2025-01-09T14:42:24.242Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Program.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Program.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Program.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Program.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAcAAAA",
+              "DocumentIndex": 0,
+              "Title": "Gui.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Game\\Gui.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Game\\Gui.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Game\\Gui.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\Game\\Gui.cs",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAwwEgAAAAYAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-20T07:31:54.004Z"
+              "WhenOpened": "2025-01-09T10:54:43.142Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Map.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Game\\Map.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Game\\Map.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Game\\Map.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\Game\\Map.cs",
+              "ViewState": "AQIAAGMAAAAAAAAAAAAowFcAAAA3AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-09T08:10:09.042Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 8,
-              "Title": "Server.cs",
-              "DocumentMoniker": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Multiplayer\\Server.cs",
-              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Multiplayer\\Server.cs",
-              "ToolTip": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\Multiplayer\\Server.cs",
-              "RelativeToolTip": "fps-multijoueur-raylib\\Multiplayer\\Server.cs",
-              "ViewState": "AQIAAE0AAAAAAAAAAAAwwCUAAAA/AAAA",
+              "Title": "GameLoop.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Game\\GameLoop.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Game\\GameLoop.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Game\\GameLoop.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\Game\\GameLoop.cs",
+              "ViewState": "AQIAABkAAAAAAAAAAAAswCMAAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-12-20T07:31:46.782Z"
+              "WhenOpened": "2024-12-20T07:32:21.187Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Program.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Program.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Program.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T07:31:54.004Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Server.cs",
+              "DocumentMoniker": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Multiplayer\\Server.cs",
+              "RelativeDocumentMoniker": "fps-multijoueur-raylib\\Multiplayer\\Server.cs",
+              "ToolTip": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\Multiplayer\\Server.cs",
+              "RelativeToolTip": "fps-multijoueur-raylib\\Multiplayer\\Server.cs",
+              "ViewState": "AQIAAC8AAAAAAAAAAAAwwCUAAAA/AAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-12-20T07:31:46.782Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -10,10 +10,12 @@ public static class Gui
 {
     public static List<string> DebugContent = new();
     private static Texture2D wepon;
+    
 
     public static void Init()
     {
         wepon = LoadTexture("./ressources/textures/ShootGun.png");
+
     }
 
     /// <summary>
