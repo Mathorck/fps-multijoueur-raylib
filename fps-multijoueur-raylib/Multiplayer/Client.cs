@@ -85,7 +85,7 @@ namespace DeadOpsArcade3D.Multiplayer
                                 Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot));
 
                                 if (Fired)
-                                    Bullet.BulletsList.Add(new Bullet(new(X,Y, Z),new( Xrot, Yrot,Zrot),Default));
+                                    Bullet.BulletsList.Add(new Bullet(new(X, Y, Z), new(Xrot, Yrot, Zrot), Default)) ;
                                 //otherPlayers.Add(id, (X, Y, Z, Xrot, Yrot, Zrot));
                             }
                         }

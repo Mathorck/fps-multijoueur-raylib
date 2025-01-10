@@ -72,6 +72,7 @@ public static class GameLoop
         // Map
         Map.Init();
         Gui.Init();
+        Bullet.Init();
     }
 
     /// <summary>

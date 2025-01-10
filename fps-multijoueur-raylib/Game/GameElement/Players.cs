@@ -21,6 +21,7 @@ namespace DeadOpsArcade3D.Game.GameElement
         private static bool canFall = true;
         private static bool isJumping = false;
         private static float jump = 0;
+        public static float rotation = 0;
 
 
         public Vector3 Position;
@@ -39,6 +40,8 @@ namespace DeadOpsArcade3D.Game.GameElement
             Life = 100f;
             HitBox = new BoundingBox(Position, Size);
             Rotation = new Vector3(xRot, yRot, zRot);
+
+            rotation = float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi);
         }
 
         /// <summary>
@@ -75,7 +78,7 @@ namespace DeadOpsArcade3D.Game.GameElement
                 DefaultModel,                   // Model to draw
                 Position - new Vector3(0, 2, 0),// Position in 3D space
                 new Vector3(0, 1, 0),           // Rotation axis (Y-axis for character rotation)
-                float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi), // Rotation angle (in degrees)
+                rotation, // Rotation angle (in degrees)
                 new Vector3(0.1f, 0.1f, 0.1f),  // Scale (matching the 0.3f from your bounding box)
                 Color.Blue                      // Tint color
             );
@@ -154,13 +157,54 @@ namespace DeadOpsArcade3D.Game.GameElement
                         1.0f
                     );
 
-                    bool collision = CheckCollisionCircleRec(new Vector2(camera.Position.X, camera.Position.Z), 0.1f, rec);
-                    if (mapPixelsData[y * Map.cubicmap.Width + x].R == 255 && collision)
+                    bool colisionX = false, colisionZ = false;
+
+                    //if (camera.Position.X - oldCamPos.X > 0)
+                    //    colisionX = CheckCollisionCircleRec(new(camera.Position.X, camera.Position.Z), 0.1f, rec);
+                    //else
+                    //    colisionX = CheckCollisionCircleRec(new(camera.Position.X, camera.Position.Z), 0.1f, rec);
+                    //if (camera.Position.Z - oldCamPos.Z > 0)
+                    //    colisionZ = CheckCollisionCircleRec(new(camera.Position.Z, camera.Position.Z), 0.1f, rec);
+                    //else
+                    //    colisionZ = CheckCollisionCircleRec(new(camera.Position.Z, camera.Position.Z), 0.1f, rec);
+
+                    //colisionX = CheckCollisionCircleRec(new(camera.Position.X, 0), 0.1f, rec);
+                    //colisionZ = CheckCollisionCircleRec(new(0, camera.Position.Z), 0.1f, rec);
+
+
+                    const float bSize = 0.2f, sSize = 0.1f;
+
+                    Rectangle recx = new(camera.Position.X - bSize/2, camera.Position.Z - sSize/2, new(bSize, sSize));
+                    Rectangle recz = new(camera.Position.X - sSize/2, camera.Position.Z - bSize/2, new(sSize, bSize));
+
+                    DrawRectangleRec(recx, Color.Blue);
+                    DrawRectangleRec(recz, Color.Black);
+
+                    colisionX = CheckCollisionRecs(recx, rec);
+                    colisionZ = CheckCollisionRecs(recz, rec);
+
+
+
+                    if(mapPixelsData[y * Map.cubicmap.Width + x].R == 255)
                     {
-                        // Collision detected, reset camera position
-                        camera.Position = oldCamPos;
-                        camera.Target = camera.Position + initialTarget;
+                        if(colisionX)
+                        {
+                            camera.Position.X = oldCamPos.X;
+                        }
+                        if (colisionZ)
+                        {
+                            camera.Position.Z = oldCamPos.Z;
+                        }
                     }
+
+
+                    //bool collision = CheckCollisionCircleRec(new Vector2(camera.Position.X, camera.Position.Z), 0.1f, rec);
+                    //if ((mapPixelsData[y * Map.cubicmap.Width + x].R == 255) && collision)
+                    //{
+                    //    // Collision detected, reset camera position
+                    //    camera.Position = oldCamPos;
+                    //    camera.Target = camera.Position + initialTarget;
+                    //}
                 }
             }
 
