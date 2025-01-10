@@ -73,14 +73,8 @@ namespace DeadOpsArcade3D.Multiplayer
                                     response += "[" + pair.Key + ", " + pair.Value + "]; ";
                                 }
                             }
-                            sendPrivately(response + "/", Client.Value);
+                            sendPrivately(response, Client.Value);
                         }
-
-
-                        //string allPositions = string.Join(";", playerPositions);
-
-
-                        //BroadcastMessage(allPositions + "/");
                     }
                 }
             }

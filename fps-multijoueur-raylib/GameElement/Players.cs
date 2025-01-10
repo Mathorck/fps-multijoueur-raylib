@@ -1,24 +1,33 @@
-﻿using static Raylib_cs.Raylib;
-using System.Numerics;
+﻿using System.Numerics;
 using DeadOpsArcade3D.Game;
 using DeadOpsArcade3D.Multiplayer;
 using Raylib_cs;
+using static Raylib_cs.Raylib;
 
 namespace DeadOpsArcade3D.GameElement
 {
     public class Player
     {
-        const float JUMP_HEIGHT = 5f;
-        const float JUMP_SPEED = 15f;
-        const float PLAYER_SPEED = 0.1f;
+        public const float JUMP_HEIGHT = 4f;
+        public const float JUMP_SPEED = 0.3f;
+        public const float PLAYER_SPEED = 0.05f;
+        public const float SPRINT_SPEED = 0.09f;
+
+        public static Ray RayA;
+        public static Ray RayD;
+        public static Ray RayW;
+        public static Ray RayS;
+        public static Ray RayDown;
+        public static Ray RayUp;
 
         /// <summary>Liste des qui contient tous les joueurs </summary>
         public static List<Player> PlayerList = new List<Player>();
 
         public static Model DefaultModel;
-        public static bool isJumping = false;
-        public static bool isGoingUp = false;
-        public static float initpos = 0;
+        private static bool canJump = true;
+        private static bool canFall = true;
+        private static bool isJumping = false;
+        private static float jump = 0;
 
 
         public Vector3 Position;
@@ -27,18 +36,22 @@ namespace DeadOpsArcade3D.GameElement
         public Vector3 Size;
         public float Speed;
         public float Life;
-        public BoundingBox BoundingBox;
+        public BoundingBox HitBox;
 
-        public Player(float x,float y, float z, float xRot, float yRot, float zRot)
+        public Player(float x, float y, float z, float xRot, float yRot, float zRot)
         {
             Position = new Vector3(x, y, z);
             Size = GetModelBoundingBox(DefaultModel).Max * 0.3f;
             Speed = 1f;
             Life = 100f;
-            BoundingBox = new BoundingBox(Position, Size);
+            HitBox = new BoundingBox(Position, Size);
             Rotation = new Vector3(xRot, yRot, zRot);
         }
 
+        /// <summary>
+        /// Cela dessine tout les joueurs
+        /// </summary>
+        /// <param name="playerList"></param>
         public static void DrawAll(List<Player> playerList)
         {
             if (playerList == null || playerList.Count == 0)
@@ -57,7 +70,6 @@ namespace DeadOpsArcade3D.GameElement
             {
                 Client.ConsoleError($"Error: {e.Message}");
             }
-
         }
 
         /// <summary>
@@ -66,264 +78,195 @@ namespace DeadOpsArcade3D.GameElement
         /// <param name="playerList">Liste des Joueurs</param>
         public void Draw()
         {
-            // TODO: Gèrer l'orientation
-            DrawModel(
-                DefaultModel, 
-                Position - new Vector3(0,2,0), 
-                0.1f, 
-                Color.DarkGray
+            DrawModelEx(
+                DefaultModel,                   // Model to draw
+                Position - new Vector3(0, 2, 0),// Position in 3D space
+                new Vector3(0, 1, 0),           // Rotation axis (Y-axis for character rotation)
+                float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi), // Rotation angle (in degrees)
+                new Vector3(0.1f, 0.1f, 0.1f),  // Scale (matching the 0.3f from your bounding box)
+                Color.Blue                      // Tint color
             );
-            
-            /* C'est pas au bon endroit En plus il me fait crash
-            for (int b = 0; b < BulletsList.Count; b++)
-            {
-                if (CheckCollisionBoxes(BulletsList[b].BoundingBox, playerList[p].BoundingBox))
-                {
-                    playerList[p].Life -= BulletsList[b].Weapon.damage;
-                    BulletsList.RemoveAt(b);
-                    b--;
-                    if (playerList[p].Life <= 0)
-                    {
-                        ////tuer le player
-                    }
-                }
-            }
-            */
-            
+        }
+        
+        /// <summary>
+        /// Dessine les rayons pour visualisation
+        /// </summary>
+        /// <param name="camera">Caméra principale</param>
+        public static void DrawRays()
+        {
+            DrawLine3D(RayW.Position, RayW.Position + RayW.Direction * 10, Color.Red); // Rayon W
+            DrawLine3D(RayS.Position, RayS.Position + RayS.Direction * 10, Color.Green); // Rayon S
+            DrawLine3D(RayD.Position, RayD.Position + RayD.Direction * 10, Color.Blue); // Rayon D
+            DrawLine3D(RayA.Position, RayA.Position + RayA.Direction * 10, Color.Yellow); // Rayon A
+            DrawLine3D(RayUp.Position, RayUp.Position + RayUp.Direction * 10, Color.Purple); // Rayon UP
+            DrawLine3D(RayDown.Position, RayDown.Position + RayDown.Direction * 10, Color.Orange); // Rayon DOWN
         }
 
         /// <summary>
         /// Gère le mouvement du joueur principal
         /// </summary>
         /// <param name="camera"></param>
-        public static void Movement(ref Camera3D camera)
+        public static unsafe void Movement(ref Camera3D camera)
         {
-            // Saut
-            if (IsKeyPressed(KeyboardKey.Space) && !isJumping)
-            {
-                isJumping = true;
-                isGoingUp = true;
-                initpos = camera.Position.Y;
-            }
-
-            if (isJumping)
-            {
-                // Logique du saut (comme dans le code précédent)
-                if (camera.Position.Y < initpos + JUMP_HEIGHT && isGoingUp)
-                {
-                    camera.Position.Y += JUMP_SPEED * GetFrameTime();
-                    camera.Target.Y += JUMP_SPEED * GetFrameTime();
-                }
-                else if (camera.Position.Y > initpos)
-                {
-                    if (camera.Position.Y - JUMP_SPEED * GetFrameTime() > initpos)
-                    {
-                        camera.Position.Y -= JUMP_SPEED * GetFrameTime();
-                        camera.Target.Y -= JUMP_SPEED * GetFrameTime();
-                    }
-                    else
-                    {
-                        camera.Position.Y = initpos;
-                        camera.Target.Y = initpos;
-                        isJumping = false;
-                        isGoingUp = false;
-                    }
-                }
-            }
-
-            // Déplacement (gestion des touches W, A, S, D)
             /*
-            Vector3 movement = Vector3.Zero;
-            if (IsKeyDown(KeyboardKey.W)) movement.Z -= PLAYER_SPEED;
-            if (IsKeyDown(KeyboardKey.S)) movement.Z += PLAYER_SPEED;
-            if (IsKeyDown(KeyboardKey.A)) movement.X -= PLAYER_SPEED;
-            if (IsKeyDown(KeyboardKey.D)) movement.X += PLAYER_SPEED;
+            
+            canJump = false;
+            canFall = true;
+            
+            RayW = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(0, 0, -1));
+            RayS = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(0, 0, 1));
+            RayD = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(1, 0, 0));
+            RayA = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(-1, 0, 0));
+            RayUp = new Ray(camera.Position - new Vector3(0,1f,0), new Vector3(0, 1, 0));
+            RayDown = new Ray(camera.Position - new Vector3(0,1.5f,0), new Vector3(0, -1, 0));
+            
+            Vector3 deplacement = new Vector3();
+            Vector3 initialTarget = camera.Target - camera.Position;
+            
+            float speed = IsKeyDown(KeyboardKey.LeftShift) ? SPRINT_SPEED : PLAYER_SPEED;
+            
+            deplacement.X = IsKeyDown(KeyboardKey.W) * speed - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
+            deplacement.Y = IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED;
 
-            // Calculer la nouvelle position de la caméra en fonction du déplacement
-            Vector3 newPosition = camera.Position + movement;
-
-            // Vérification des collisions avec les obstacles avant d'appliquer la nouvelle position
-            if (!Map.CheckCollisionWithObstacles(newPosition, new Vector3(1.0f, 1.0f, 1.0f)))
+            foreach (BoundingBox obstacle in Map.Obstacles)
             {
-                // Si aucune collision n'est détectée, on applique la nouvelle position à la caméra
-                camera.Position = newPosition;
-                //camera.Target = newPosition + new Vector3(0, 0, -1); // Maintien la direction de la caméra
+                NormalCollision(ref camera.Position.Z,speed, ref deplacement, RayW, obstacle);
+                NormalCollision(ref camera.Position.Z,-speed, ref deplacement, RayS, obstacle);
+                NormalCollision(ref camera.Position.X,-speed, ref deplacement, RayD, obstacle);
+                NormalCollision(ref camera.Position.X,speed, ref deplacement, RayA, obstacle);
+                    
+                RayCollision collisionDown = GetRayCollisionBox(RayDown, obstacle);
+                if (collisionDown.Hit && float.Round(collisionDown.Distance, 1) <= 0.2f)
+                {
+                    canJump = true;
+                    canFall = false;
+                }
+                
+                //Le plafond n'est pas encore fait
             }
+            Jumping(ref camera);
 
-            // Rotation de la caméra avec la souris
-            /*Vector2 mouseDelta = GetMouseDelta();
-
-            // Sensibilité de la rotation
-            float rotationSpeed = 0.05f;
-
-            // Limites de l'angle de rotation vertical
-            float verticalAngleLimit = 80f;
-
-            // Rotation horizontale (autour de l'axe Y)
-            camera.Target = Vector3.Transform(camera.Target - camera.Position, Matrix4x4.CreateFromAxisAngle(new Vector3(0, 1, 0), -mouseDelta.X * rotationSpeed)) + camera.Position;
-
-            // Rotation verticale (autour de l'axe X)
-            Vector3 forward = Vector3.Normalize(camera.Target - camera.Position);
-            float angleX = (float)Math.Acos(Vector3.Dot(forward, new Vector3(0, 1, 0))); // Angle entre la caméra et l'axe Y
-            float deltaAngleX = mouseDelta.Y * rotationSpeed;
-
-            // Empêcher la rotation verticale excessive (pas plus de 80 degrés vers le haut ou vers le bas)
-            if (angleX + deltaAngleX < Math.PI / 2 && angleX + deltaAngleX > -Math.PI / 2)
-            {
-                camera.Target = Vector3.Transform(camera.Target - camera.Position, Matrix4x4.CreateFromAxisAngle(new Vector3(1, 0, 0), deltaAngleX)) + camera.Position;
-            }*/
-
-            // Réinitialisation de la position de la caméra à chaque boucle
-
-
-            float W = IsKeyDown(KeyboardKey.W) * PLAYER_SPEED - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
-            float D = IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED;
-            Vector3 Old = camera.Position;
-
-            Vector3 New = new(0, 0, 0);
-
-
-            Vector3 movement = Vector3.Zero;
-            if (IsKeyDown(KeyboardKey.W)) movement.Z -= PLAYER_SPEED;
-            if (IsKeyDown(KeyboardKey.S)) movement.Z += PLAYER_SPEED;
-            if (IsKeyDown(KeyboardKey.A)) movement.X -= PLAYER_SPEED;
-            if (IsKeyDown(KeyboardKey.D)) movement.X += PLAYER_SPEED;
-
-            // Calculer la nouvelle position de la caméra en fonction du déplacement
-            Vector3 newPosition = camera.Position + movement;
-
-
-
-            float angle = float.Atan2(camera.Target.X - camera.Position.X, camera.Target.Z - camera.Position.Z) * (180 / float.Pi);
-            Console.WriteLine(angle);
-
-            if((angle >= 0 && angle <= 90 && IsKeyDown(KeyboardKey.W)) || 
-                (angle >= 90 && angle <= 180 && IsKeyDown(KeyboardKey.D)) || 
-                (angle >= -180 && angle <= -90 && IsKeyDown(KeyboardKey.S)) || 
-                (angle >= -90 && angle <= 0 && IsKeyDown(KeyboardKey.A)))
-            {
-                Console.WriteLine("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\nXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
-
-                if (!Map.CheckCollisionWithObstacles(Old - new Vector3(PLAYER_SPEED * GetFrameTime(), 0, 0), Vector3.One, PLAYER_SPEED*GetFrameTime(), 0))
-                    New = new(W, D, 0);
-                else
-                    New = new(0, 0, 0);
-            }
-            if ((angle >= 45 && angle <= 135 && IsKeyDown(KeyboardKey.S)) ||
-                (((angle >= 135 && angle <= 180) || (angle >= -180 && angle <= -135)) && IsKeyDown(KeyboardKey.A)) ||
-                (angle >= -135 && angle <= -45 && IsKeyDown(KeyboardKey.W)) ||
-                (angle >= -45 && angle <= 45 && IsKeyDown(KeyboardKey.D)))
-            {
-                Console.WriteLine("-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X\n-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X-X");
-
-                if (!Map.CheckCollisionWithObstacles(Old - new Vector3(PLAYER_SPEED * GetFrameTime(), 0, 0), Vector3.One, -PLAYER_SPEED * GetFrameTime(), 0))
-                    New = new(W, D, 0);
-                else
-                    New = new(0, 0, 0);
-            }
-            if ((angle >= 45 && angle <= 135 && IsKeyDown(KeyboardKey.D)) ||
-                (((angle >= 135 && angle <= 180) || (angle >= -180 && angle <= -135)) && IsKeyDown(KeyboardKey.S)) ||
-                (angle >= -135 && angle <= -45 && IsKeyDown(KeyboardKey.A)) ||
-                (angle >= -45 && angle <= 45 && IsKeyDown(KeyboardKey.W)))
-            {
-                Console.WriteLine("YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\nYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\nYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\nYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY\nYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY");
-
-                if (!Map.CheckCollisionWithObstacles(Old - new Vector3(PLAYER_SPEED * GetFrameTime(), 0, 0), Vector3.One, 0, PLAYER_SPEED * GetFrameTime()))
-                    New = new(W, D, 0);
-                else
-                    New = new(0, 0, 0);
-            }
-            if ((angle >= 45 && angle <= 135 && IsKeyDown(KeyboardKey.A)) ||
-                (((angle >= 135 && angle <= 180) || (angle >= -180 && angle <= -135)) && IsKeyDown(KeyboardKey.W)) ||
-                (angle >= -135 && angle <= -45 && IsKeyDown(KeyboardKey.D)) ||
-                (angle >= -45 && angle <= 45 && IsKeyDown(KeyboardKey.S)))
-            {
-                Console.WriteLine("-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y\n-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y\n-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y\n-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y\n-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y\n-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y-Y\n");
-
-                if (!Map.CheckCollisionWithObstacles(Old - new Vector3(PLAYER_SPEED * GetFrameTime(), 0, 0), Vector3.One, 0, -PLAYER_SPEED * GetFrameTime()))
-                    New = new(W, D, 0);
-                else
-                    New = new(0, 0, 0);
-            }
-
-
-
-
-
-            //if (!Map.CheckCollisionWithObstacles(Old - new Vector3(PLAYER_SPEED * GetFrameTime(), 0, 0), Vector3.One, PLAYER_SPEED * GetFrameTime()))
-            //            New = new(W, D, 0);
-            //        else
-            //            New = new(0, 0, 0);
-
-
-
-                //if (movement.X == PLAYER_SPEED)
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old - new Vector3(PLAYER_SPEED, 0, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-                //if (movement.X == -PLAYER_SPEED)
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old - new Vector3(-PLAYER_SPEED, 0, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-                //if (movement.Y == PLAYER_SPEED)
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old - new Vector3(0, PLAYER_SPEED, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-                //if (movement.Y == -PLAYER_SPEED)
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old - new Vector3(0, -PLAYER_SPEED, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-
-
-
-
-                //if (IsKeyDown(KeyboardKey.A))
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old - new Vector3(W, D, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-                //if (IsKeyDown(KeyboardKey.S))
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old + new Vector3(W, D, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-                //if (IsKeyDown(KeyboardKey.D))
-                //{
-                //    if (!Map.CheckCollisionWithObstacles(Old + new Vector3(W, D, 0), Vector3.One))
-                //        New = new(W, D, 0);
-                //    else
-                //        New = new(0, 0, 0);
-                //}
-
-                //if (!Map.CheckCollisionWithObstacles(Old + new Vector3(W, D, 0), Vector3.One))
-                //    New = new(W, D, 0);
-                //else
-                //    New = new(0,0,0);
-
-
-                UpdateCameraPro(
-                ref camera,
-                New,
-                new Vector3(GetMouseDelta().X * GameLoop.sensibilité, GetMouseDelta().Y * GameLoop.sensibilité, 0),
-                0
+            camera.Target = camera.Position + initialTarget;
+            
+            // Mise a jour de la caméra (Déplacement)
+            UpdateCameraPro(ref camera,
+                deplacement,
+                new Vector3(
+                    GetMouseDelta().X * GameLoop.sensibilité,
+                    GetMouseDelta().Y * GameLoop.sensibilité,
+                    0.0f),
+                0f
             );
+            */
+
+            canJump = false;
+            canFall = true;
+
+            Gui.DebugContent.Add($"Position: [{float.Round(camera.Position.X, 2)} | {float.Round(camera.Position.Y, 2)} | {float.Round(camera.Position.Z, 2)}]");
+
+            Vector3 oldCamPos = camera.Position;
+            Vector3 initialTarget = camera.Target - camera.Position;
+            Vector3 deplacement = new Vector3();
+
+            float speed = IsKeyDown(KeyboardKey.LeftShift) ? SPRINT_SPEED : PLAYER_SPEED;
+
+            deplacement.X = IsKeyDown(KeyboardKey.W) * speed - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
+            deplacement.Y = IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED;
+
+            camera.Up = new Vector3(0, 1, 0);
+
+
+            //Jumping(ref camera);
+
+            // Mise a jour de la caméra (Déplacement)
+            UpdateCameraPro(ref camera,
+                deplacement,
+                new Vector3(
+                    GetMouseDelta().X * GameLoop.sensibilité,
+                    GetMouseDelta().Y * GameLoop.sensibilité,
+                    0.0f),
+                0f
+            );
+
+
+            Vector2 playerPos = new(camera.Position.X, camera.Position.Z);
+
+            int playerCellX = (int)(playerPos.X - Map.mapPosition.X + 0.5f);
+            int playerCellY = (int)(playerPos.Y - Map.mapPosition.Z + 0.5f);
+
+            if (playerCellX < 0)
+            {
+                playerCellX = 0;
+            }
+            else if (playerCellX >= Map.cubicmap.Width)
+            {
+                playerCellX = Map.cubicmap.Width - 1;
+            }
+
+            if (playerCellY < 0)
+            {
+                playerCellY = 0;
+            }
+            else if (playerCellY >= Map.cubicmap.Height)
+            {
+                playerCellY = Map.cubicmap.Height - 1;
+            }
+
+            for (int y = 0; y < Map.cubicmap.Height; y++)
+            {
+                for (int x = 0; x < Map.cubicmap.Width; x++)
+                {
+                    Color* mapPixelsData = Map.MapPixels;
+
+                    // Collision: Color.white pixel, only check R channel
+                    Rectangle rec = new(
+                        Map.mapPosition.X - 0.5f + x * 1.0f,
+                        Map.mapPosition.Z - 0.5f + y * 1.0f,
+                        1.0f,
+                        1.0f
+                    );
+
+                    bool collision = CheckCollisionCircleRec(new Vector2(camera.Position.X, camera.Position.Z), 0.1f, rec);
+                    if ((mapPixelsData[y * Map.cubicmap.Width + x].R == 255) && collision)
+                    {
+                        // Collision detected, reset camera position
+                        camera.Position = oldCamPos;
+                        camera.Target = camera.Position + initialTarget;
+                    }
+                }
+            }
+
+
         }
 
+        /// <summary>
+        /// Méthode qui gère le saut et la chute du joueur
+        /// </summary>
+        /// <param name="camera"></param>
+        private static void Jumping(ref Camera3D camera)
+        {
+            if (canJump && !isJumping && IsKeyDown(KeyboardKey.Space))
+                isJumping = true;
+            
+            if (isJumping)
+            {
+                float jumpProgress = jump / JUMP_HEIGHT;
+                float jumpVelocity = JUMP_SPEED * (1f - jumpProgress + 0.1f);
+                camera.Position.Y += jumpVelocity;
+                jump += jumpVelocity;
+                if (jump >= JUMP_HEIGHT)
+                {
+                    isJumping = false;
+                    jump = 0;
+                }
+            }
+            else if (canFall && !isJumping)
+            {
+                float fallProgress = jump / JUMP_HEIGHT;
+                float fallVelocity = JUMP_SPEED * (fallProgress + 0.1f);
+                camera.Position.Y -= fallVelocity;
+                jump += fallVelocity;
+            }
+        }
     }
 }

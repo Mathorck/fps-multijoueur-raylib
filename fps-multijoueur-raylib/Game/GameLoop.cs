@@ -8,10 +8,9 @@ namespace DeadOpsArcade3D.Game;
 
 public static class GameLoop
 {
-    private static Camera3D camera;
+    public static Camera3D camera;
     
     private static Weapon weapon = new Weapon();
-    private static Vector3 movement = new Vector3();
     
     /// <summary>Variable qui dit si la fenêtre devrait se fermer </summary>
     private static bool ferme = false;
@@ -24,7 +23,7 @@ public static class GameLoop
     /// </summary>
     public static void StartGame()
     {
-        InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops Arcade");
+        InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops 3D");
         ToggleFullscreen();
         SetTargetFPS(60);
         
@@ -46,7 +45,9 @@ public static class GameLoop
                 ferme = true;
             ///////////////////
         }
+
         CloseWindow();
+        Environment.Exit(0);
     }
 
     /// <summary>
@@ -56,17 +57,29 @@ public static class GameLoop
     private static void SetVariables()
     {
         // Modèle utilisé par les joueurs
-        Player.DefaultModel = LoadModel("ressources/model3d/tinker.obj");
+        Player.DefaultModel = LoadModel("ressources/model3d/alien.obj");
+
+        // Raycast
+        Player.RayW = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayS = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayD = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayA = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayUp = new Ray(Vector3.One, Vector3.Zero);
+        Player.RayDown = new Ray(Vector3.One, Vector3.Zero);
 
         // Caméra du joueur
         camera = new Camera3D
         {
-            Position = new Vector3(0.0f, 2.0f, 4.0f),
+            Position = new Vector3(0.2f, 0.4f, 0.2f),
             Target = new Vector3(0.0f, 2.0f, 0.0f),
             Up = new Vector3(0.0f, 1.0f, 0.0f),
             FovY = 60.0f,
             Projection = CameraProjection.Perspective
         };
+
+        // Map
+        Map.Init();
+        Gui.Init();
     }
 
     /// <summary>
@@ -79,6 +92,8 @@ public static class GameLoop
         weapon.Fire(Bullet.BulletsList, camera);
         
         BeginDrawing();
+        ClearBackground(Color.RayWhite);
+
         BeginMode3D(camera);
 
         Map.Render();

@@ -1,11 +1,18 @@
 {
   "version": 2,
-  "dgSpecHash": "X5I/eWwcSeOh5cKGkKEHbUbH99DH+Ecf3yw6ueXfbSk5zrzsvkACIC4JXwC7PKeU1POmQ3jlWue+6B1VY9TWAQ==",
+  "dgSpecHash": "vidPe/hSWT9goX1USLw7y0JXV524wU+R9QURvz9WEj2l3BWSu4rsEm7QUP0L0lsrwSprW6irsv/Dp1BPXgGrSA==",
   "success": true,
-  "projectFilePath": "D:\\fps-multijoueur-raylib\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
+  "projectFilePath": "F:\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib-Matheo\\fps-multijoueur-raylib\\DeadOpsArcade3D.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Fahmee\\.nuget\\packages\\raylib-cs\\6.1.1\\raylib-cs.6.1.1.nupkg.sha512",
     "C:\\Users\\Fahmee\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1900",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Une erreur s’est produite lors de l’obtention des données de vulnérabilité du package : Une erreur s'est produite lors de l'envoi de la demande."
+    }
+  ]
 }

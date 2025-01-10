@@ -16,7 +16,7 @@ namespace DeadOpsArcade3D.Multiplayer
         /// Cela démmarre le Jeu 
         /// </summary>
         /// <param name="host">Adresse Ip du serveur</param>
-        /// <param name="port">le port</param>
+        /// <param name="port"></param>
         public static void StartClient(string host, int port)
         {
             client = new TcpClient();
@@ -33,7 +33,6 @@ namespace DeadOpsArcade3D.Multiplayer
         /// <summary>
         /// Cela permet de recevoir les messages du serveur
         /// </summary>
-        /// <exception cref="ArgumentException">Ce n'est pas censé arriver</exception>
         private static void ReceiveMessages()
         {
             Weapon Default = new Weapon();
@@ -86,7 +85,7 @@ namespace DeadOpsArcade3D.Multiplayer
                                 Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot));
 
                                 if (Fired)
-                                    Bullet.BulletsList.Add(new Bullet(new(X,Y,Z),new( Xrot, Yrot,Zrot),Default));
+                                    Bullet.BulletsList.Add(new Bullet(new(X,Y, Z),new( Xrot, Yrot,Zrot),Default));
                                 //otherPlayers.Add(id, (X, Y, Z, Xrot, Yrot, Zrot));
                             }
                         }
@@ -112,21 +111,59 @@ namespace DeadOpsArcade3D.Multiplayer
             stream.Write(data, 0, data.Length);
         }
 
+        /// <summary>
+        /// Met la variable sendFire à true
+        /// </summary>
         public static void Fire()
         {
             sendFire = true;
         }
 
-
+        #region Console Message
+        
         /// <summary>
         /// Crée un message d'erreur dans la console
         /// </summary>
         /// <param name="message"></param>
         public static void ConsoleError(string message)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Error: {message}");
-            Console.ForegroundColor = ConsoleColor.White;
+            Consolelog(message, ConsoleColor.Red);
         }
+        
+        /// <summary>
+        /// Crée un message d'information dans la console
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ConsoleInfo(string message)
+        {
+            Consolelog(message, ConsoleColor.White);
+        }
+        
+        /// <summary>
+        /// Crée un message de succès dans la console
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ConsoleSuccess(string message)
+        {
+            Consolelog(message, ConsoleColor.Green);
+        }
+        
+        /// <summary>
+        /// Crée un message d'avertissement dans la console
+        /// </summary>
+        /// <param name="message"></param>
+        public static void ConsoleWarning(string message)
+        {
+            Consolelog(message, ConsoleColor.Yellow);
+        }
+        private static void Consolelog(string message, ConsoleColor Color)
+        {
+            ConsoleColor old = Console.ForegroundColor;
+            Console.ForegroundColor = Color;
+            Console.WriteLine(message);
+            Console.ForegroundColor = old;
+        }
+        
+        #endregion
     }
 }
