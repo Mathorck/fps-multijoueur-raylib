@@ -99,10 +99,12 @@ public static class GameLoop
 
         Player.DrawAll(Player.PlayerList);
 
+        /*
         for (int i = 0; i < Player.PlayerList.Count; i++) 
         {
             Player.PlayerList[i].Animation();
         }
+        */
 
         EndMode3D();
         Gui.Render();

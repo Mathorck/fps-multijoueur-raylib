@@ -2,11 +2,7 @@
 using System.Text;
 using DeadOpsArcade3D.Game;
 using Raylib_cs;
-<<<<<<< HEAD
 using DeadOpsArcade3D.Game.GameElement;
-=======
-using System.ComponentModel.Design;
->>>>>>> eb6c1f8ae379fe12d572a1a5f0352fbecdbd2509
 
 namespace DeadOpsArcade3D.Multiplayer
 {
@@ -50,13 +46,6 @@ namespace DeadOpsArcade3D.Multiplayer
                     Console.WriteLine("Message reçu : " + message);
 
                     // Mise à jour des positions des autres joueurs
-                    //otherPlayers.Clear();
-                    List<Player>  playerList= new List<Player>();
-                    foreach (Player player in Player.PlayerList)
-                    {
-                        playerList.Add(player);
-                    }
-
                     Player.PlayerList.Clear();
                     string[] tempTbl = message.Split("/");
                     string[] allPositions = tempTbl[0].Split(';');
@@ -93,19 +82,6 @@ namespace DeadOpsArcade3D.Multiplayer
                                     throw new ArgumentException("Erreur");
 
                                 Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot));
-                                for (int j = 0; j < Player.PlayerList.Count && j < playerList.Count(); j++)
-                                {
-                                    if (Player.PlayerList[j].Position.Y != playerList[j].Position.Y)
-                                    {
-                                        Player.PlayerList[j].animIndex = 3;
-                                        Player.PlayerList[i].animCurrentFrame = playerList[j].animCurrentFrame;
-                                    }  
-                                    else if (Player.PlayerList[j].Position.X != playerList[j].Position.X || Player.PlayerList[j].Position.Z != playerList[j].Position.Z)
-                                    {
-                                        Player.PlayerList[j].animIndex = 10;
-                                        Player.PlayerList[i].animCurrentFrame = playerList[j].animCurrentFrame;
-                                    }
-                                }
 
                                 if (Fired)
                                     Bullet.BulletsList.Add(new Bullet(new(X, Y, Z), new(Xrot, Yrot, Zrot), Default)) ;

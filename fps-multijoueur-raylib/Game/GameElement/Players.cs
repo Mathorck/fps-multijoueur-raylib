@@ -91,10 +91,10 @@ namespace DeadOpsArcade3D.Game.GameElement
         {
             DrawModelEx(
                 DefaultModel,                   // Model to draw
-                Position - new Vector3(0, 2, 0),// Position in 3D space
+                Position - new Vector3(0, 0.39f, 0),// Position in 3D space
                 new Vector3(0, 1, 0),           // Rotation axis (Y-axis for character rotation)
                 float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi), // Rotation angle (in degrees)
-                new Vector3(0.5f, 0.5f, 0.5f),  // Scale (matching the 0.3f from your bounding box)
+                new Vector3(0.12f, 0.12f, 0.12f),  // Scale (matching the 0.3f from your bounding box)
                 Color.Blue                      // Tint color
             );
         }
@@ -203,10 +203,12 @@ namespace DeadOpsArcade3D.Game.GameElement
                         if (colisionX)
                         {
                             camera.Position.X = oldCamPos.X;
+                            camera.Target = camera.Position + initialTarget;
                         }
                         if (colisionZ)
                         {
                             camera.Position.Z = oldCamPos.Z;
+                            camera.Target = camera.Position + initialTarget;
                         }
                     }
 

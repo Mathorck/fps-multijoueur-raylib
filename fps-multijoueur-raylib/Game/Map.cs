@@ -12,7 +12,7 @@ public static class Map
     public static unsafe Color* MapPixels;
     public static Texture2D cubicmap;
     public static Vector3 mapPosition = new(-16.0f, 0.0f, -8.0f);
-
+    
     public static unsafe void Init()
     {
         map = LoadImage("./ressources/textures/Map.png");
