@@ -26,7 +26,7 @@ namespace DeadOpsArcade3D.Game.GameElement
             BoundingBox = new BoundingBox(Position, Size);
         }
 
-        public bool update()
+        public bool Update()
         {
             Position += Direction * speed * Raylib.GetFrameTime();
             BoundingBox.Min = Position;
@@ -46,8 +46,26 @@ namespace DeadOpsArcade3D.Game.GameElement
             for (int b = 0; b < bullets.Count; b++)
             {
                 Raylib.DrawCubeV(bullets[b].Position, bullets[b].Size, Color.Black);
-                if (bullets[b].update())
+                if (bullets[b].Update())
                     bullets.RemoveAt(b);
+            }
+        }
+
+        /// <summary>
+        /// Pas utilisé
+        /// </summary>
+        private static unsafe void CollisionVerif()
+        {
+            List<BoundingBox> walls = new List<BoundingBox>();
+            for (int i = 0; i < walls.Count; i++)
+            {
+                walls.Add(Raylib.GetMeshBoundingBox(Map.model.Meshes[i]));
+                Gui.DebugContent.Add(walls[i].ToString());
+            }
+            
+            for (int i = 0; i < BulletsList.Count; i++) 
+            {
+                
             }
         }
     }

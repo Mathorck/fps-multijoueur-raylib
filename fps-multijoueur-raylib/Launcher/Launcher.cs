@@ -225,7 +225,7 @@ public class Launcher
         using (MySqlConnection conn = new MySqlConnection(connectionString))
         {
             conn.Open();
-            MySqlCommand cmd = new($"INSERT INTO serveur (Ip, Nom) VALUE ('{Dns.GetHostAddresses(Dns.GetHostName())[1]}', '{ip}')", conn);
+            MySqlCommand cmd = new($"INSERT INTO serveur (Ip, Nom) VALUE ('{Dns.GetHostAddresses(Dns.GetHostName())[0]}', '{ip}')", conn);
             cmd.ExecuteNonQuery();
             conn.Close();
         }

@@ -8,7 +8,7 @@ namespace DeadOpsArcade3D.Game;
 public static class Map
 {
     private static Image map;
-    private static Model model;
+    public static Model model;
     public static unsafe Color* MapPixels;
     public static Texture2D cubicmap;
     public static Vector3 mapPosition = new(-16.0f, 0.0f, -8.0f);
