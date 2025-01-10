@@ -1,4 +1,5 @@
 ﻿using System.Numerics;
+using System.Runtime.CompilerServices;
 using DeadOpsArcade3D.Game;
 using DeadOpsArcade3D.Multiplayer;
 using Raylib_cs;
@@ -17,6 +18,10 @@ namespace DeadOpsArcade3D.Game.GameElement
         public static List<Player> PlayerList = new List<Player>();
 
         public static Model DefaultModel;
+
+        public int animIndex;
+        public int animCurrentFrame;
+
         private static bool canJump = true;
         private static bool canFall = true;
         private static bool isJumping = false;
@@ -42,6 +47,16 @@ namespace DeadOpsArcade3D.Game.GameElement
             Rotation = new Vector3(xRot, yRot, zRot);
 
             rotation = float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi);
+        }
+
+        public Player(Player player)
+        {
+            Position = player.Position;
+            Size = player.Size;
+            Speed = player.Speed;
+            Life = player.Life;
+            HitBox = player.HitBox;
+            Rotation = player.Rotation;
         }
 
         /// <summary>
@@ -78,8 +93,8 @@ namespace DeadOpsArcade3D.Game.GameElement
                 DefaultModel,                   // Model to draw
                 Position - new Vector3(0, 2, 0),// Position in 3D space
                 new Vector3(0, 1, 0),           // Rotation axis (Y-axis for character rotation)
-                rotation, // Rotation angle (in degrees)
-                new Vector3(0.1f, 0.1f, 0.1f),  // Scale (matching the 0.3f from your bounding box)
+                float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi), // Rotation angle (in degrees)
+                new Vector3(0.5f, 0.5f, 0.5f),  // Scale (matching the 0.3f from your bounding box)
                 Color.Blue                      // Tint color
             );
         }
@@ -118,8 +133,6 @@ namespace DeadOpsArcade3D.Game.GameElement
                     0.0f),
                 0f
             );
-
-
             Vector2 playerPos = new(camera.Position.X, camera.Position.Z);
 
             int playerCellX = (int)(playerPos.X - Map.mapPosition.X + 0.5f);
@@ -174,8 +187,8 @@ namespace DeadOpsArcade3D.Game.GameElement
 
                     const float bSize = 0.2f, sSize = 0.1f;
 
-                    Rectangle recx = new(camera.Position.X - bSize/2, camera.Position.Z - sSize/2, new(bSize, sSize));
-                    Rectangle recz = new(camera.Position.X - sSize/2, camera.Position.Z - bSize/2, new(sSize, bSize));
+                    Rectangle recx = new(camera.Position.X - bSize / 2, camera.Position.Z - sSize / 2, new(bSize, sSize));
+                    Rectangle recz = new(camera.Position.X - sSize / 2, camera.Position.Z - bSize / 2, new(sSize, bSize));
 
                     DrawRectangleRec(recx, Color.Blue);
                     DrawRectangleRec(recz, Color.Black);
@@ -185,9 +198,9 @@ namespace DeadOpsArcade3D.Game.GameElement
 
 
 
-                    if(mapPixelsData[y * Map.cubicmap.Width + x].R == 255)
+                    if (mapPixelsData[y * Map.cubicmap.Width + x].R == 255)
                     {
-                        if(colisionX)
+                        if (colisionX)
                         {
                             camera.Position.X = oldCamPos.X;
                         }
@@ -208,7 +221,77 @@ namespace DeadOpsArcade3D.Game.GameElement
                 }
             }
 
+        }
 
+
+        public void Animation()
+        {
+            //Default Character
+            string fileName = "ressources/model3d/character/robot.glb";
+            int animCount = 0;
+            sbyte[] fileNameBytes = new sbyte[fileName.Length + 1];
+            for (int i = 0; i < fileName.Length; i++)
+            {
+                fileNameBytes[i] = (sbyte)fileName[i];
+            }
+            fileNameBytes[fileName.Length] = 0;
+            unsafe
+            {
+                fixed (sbyte* pFileName = fileNameBytes)
+                {
+                    ModelAnimation* characterAnimations = LoadModelAnimations(pFileName, &animCount);
+
+                    Console.WriteLine("Nombre d'animations chargées : " + animCount);
+
+                    // Select current animation
+
+                    // Faire défiler les animation avec les cliques de la souris            
+                    /*if (IsMouseButtonPressed(MouseButton.Right)) animIndex = (animIndex + 1) % animCount;
+                    else if (IsMouseButtonPressed(MouseButton.Left)) animIndex = (animIndex + animCount - 1) % animCount;*/
+
+                    /*
+                        0 Emote
+                        1 Mort
+                        2 Idle
+                        3 Sauter
+                        4 Non
+                        5 Taper
+                        6 Courir
+                        7 S'asseoir
+                        8 Se lever
+                        9 Pouce
+                        10 Marcher   
+                        11 Sauter comme mario
+                        12 Salut
+                        13 Oui
+                    */
+                    //Control Animations                
+                    if (IsKeyDown(KeyboardKey.W)) animIndex = 10;
+                    if (IsKeyPressed(KeyboardKey.Space))
+                    {
+                        animIndex = 3;
+                        //Mettre un timer puis mettre l'animation idle
+                    }
+                    if (IsMouseButtonPressed(MouseButton.Left)) animIndex = 5;
+                    if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.One))
+                    {
+                        animIndex = 0;
+                        DrawText("Vous faites une emote!", GetScreenWidth() / 2, GetScreenHeight() / 3, 10, Color.DarkPurple);
+                    }
+
+                    if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Two)) animIndex = 9;
+                    if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Three)) animIndex = 11;
+                    if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Four)) animIndex = 12;
+                    if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Five)) animIndex = 4;
+                    if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Six)) animIndex = 13;
+
+                    // Update model animation
+                    ModelAnimation anim = characterAnimations[animIndex];
+                    animCurrentFrame = (animCurrentFrame + 1) % anim.FrameCount;
+                    UpdateModelAnimation(DefaultModel, anim, animCurrentFrame);
+                }
+
+            }
         }
 
         /// <summary>

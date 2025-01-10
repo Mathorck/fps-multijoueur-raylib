@@ -42,7 +42,11 @@ public static class GameLoop
             
             // Empêche de fermer le jeu avec ESC
             if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */)
+            {
+                UnloadModel(Player.DefaultModel);
                 ferme = true;
+            }
+
             ///////////////////
         }
 
@@ -57,7 +61,7 @@ public static class GameLoop
     private static void SetVariables()
     {
         // Modèle utilisé par les joueurs
-        Player.DefaultModel = LoadModel("ressources/model3d/alien.obj");
+        Player.DefaultModel = LoadModel("ressources/model3d/character/robot.glb");
 
         // Caméra du joueur
         camera = new Camera3D
@@ -83,7 +87,7 @@ public static class GameLoop
         Client.SendInfo(camera);
         Player.Movement(ref camera);
         weapon.Fire(Bullet.BulletsList, camera);
-        
+
         BeginDrawing();
         ClearBackground(Color.RayWhite);
 
@@ -94,7 +98,12 @@ public static class GameLoop
         Bullet.Draw(Bullet.BulletsList);
 
         Player.DrawAll(Player.PlayerList);
-        
+
+        for (int i = 0; i < Player.PlayerList.Count; i++) 
+        {
+            Player.PlayerList[i].Animation();
+        }
+
         EndMode3D();
         Gui.Render();
         EndDrawing();
