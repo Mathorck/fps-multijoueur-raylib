@@ -1,13 +1,13 @@
 # Fichiers et dossiers communs aux projets C#
-bin/
-obj/
+*/bin/
+*/obj/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
 
 # Fichiers spécifiques à Visual Studio
-.vs/
+*/.vs/
 *.vsp
 *.vspx
 *.vsmdi
