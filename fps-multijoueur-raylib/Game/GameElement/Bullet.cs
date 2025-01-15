@@ -32,10 +32,24 @@ public class Bullet
         Rotation = float.Atan2(Direction.X - PlayerPosition.X, Direction.Z - PlayerPosition.Z) * (180 / float.Pi);
     }
 
+    /// <summary>
+    ///     Met à jour la position de la balle
+    /// </summary>
+    /// <returns>Si la balle doit être détruite</returns>
     public bool Update()
     {
         Position += Direction * speed * Raylib.GetFrameTime();
         BoundingBox.Min = Position;
+
+        foreach (var Player in Player.PlayerList)
+        {
+            if (Raylib.CheckCollisionBoxes(BoundingBox, Player.HitBox))
+            {
+                Player.Health -= Weapon.damage;
+                return true;
+            }
+        }
+        
         if (Position.Y <= 0) return true;
         return false;
     }

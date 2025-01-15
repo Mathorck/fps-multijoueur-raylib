@@ -27,7 +27,7 @@ public class Player
 
     private int animCurrentFrame;
     private int animIndex;
-    private BoundingBox hitBox;
+    public BoundingBox HitBox;
     private float life;
 
     public Vector3 Position;
@@ -44,7 +44,7 @@ public class Player
         Size = GetModelBoundingBox(DefaultModel).Max * 0.3f;
         Speed = 1f;
         life = 100f;
-        hitBox = new BoundingBox(Position, Size);
+        HitBox = new BoundingBox(Position, Size);
         Rotation = new Vector3(xRot, yRot, zRot);
         this.pseudo = pseudo;
 
@@ -61,13 +61,13 @@ public class Player
         Size = player.Size;
         Speed = player.Speed;
         life = player.life;
-        hitBox = player.hitBox;
+        HitBox = player.HitBox;
         Rotation = player.Rotation;
         pseudo = player.pseudo;
     }
 
     /// <summary>
-    ///     Cela dessine tout les joueurs
+    ///     Cela dessine tous les joueurs
     /// </summary>
     /// <param name="playerList"></param>
     public static void DrawAll(List<Player> playerList)
@@ -133,7 +133,7 @@ public class Player
 
         //Jumping(ref camera);
 
-        // Mise a jour de la caméra (Déplacement)
+        // Mise à jour de la caméra (Déplacement)
         UpdateCameraPro(ref camera,
             deplacement,
             new Vector3(
@@ -220,7 +220,7 @@ public class Player
 
                 // Select current animation
 
-                // Faire défiler les animation avec les cliques de la souris            
+                // Faire défiler l'animation avec les cliques de la souris
                 /*if (IsMouseButtonPressed(MouseButton.Right)) animIndex = (animIndex + 1) % animCount;
                 else if (IsMouseButtonPressed(MouseButton.Left)) animIndex = (animIndex + animCount - 1) % animCount;*/
 
