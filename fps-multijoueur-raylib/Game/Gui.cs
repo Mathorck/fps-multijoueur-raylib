@@ -106,17 +106,51 @@ public static class Gui
 
     private static void ShowTab()
     {
-        float SHeight = GetScreenHeight() * 0.5f;
+        float SHeight = GetScreenHeight();
         float SWidth = GetScreenWidth();
 
         int tabWidth = 400;
+        int tabPaddingR = (int)(SWidth - tabWidth*2);
 
         DrawRectangle(
-            (int)(SWidth - tabWidth),
+            (int)(tabWidth),
             50,
-            (int)(SWidth + tabWidth),
+            tabPaddingR,
             (int)(SHeight - 100),
             new Color(0, 0, 0, 100)
         );
+
+        int hgt = 55; 
+        
+        DrawPlayerElement(Player.Nom, ref hgt, tabWidth, tabPaddingR);
+        hgt += 10;
+
+        for (int i = 0; i < Player.PlayerList.Count; i++)
+        {
+            Player plr = Player.PlayerList[i];
+            
+            DrawPlayerElement(plr.Pseudo,ref hgt, tabWidth, tabPaddingR);
+            
+        }
+    }
+
+    private static void DrawPlayerElement(string pseudo,ref int hgt,int tabWidth, int tabPaddingR)
+    {
+        DrawRectangle(
+            tabWidth+5,
+            hgt,
+            tabPaddingR-10,
+            hgt+5,
+            new Color(0, 0, 0, 100)
+        );
+            
+        DrawText(
+            pseudo,
+            tabWidth+10,
+            hgt+10,
+            20,
+            Color.White
+        );
+        hgt += 10;
     }
 }

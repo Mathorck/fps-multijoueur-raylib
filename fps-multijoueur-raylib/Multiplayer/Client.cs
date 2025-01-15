@@ -47,7 +47,7 @@ internal class Client
                 ConsoleInfo("Message reçu : " + message);
 
                 // Mise à jour des positions des autres joueurs
-                //Player.PlayerList.Clear();
+                // Player.PlayerList.Clear();
                 string[] tempTbl = message.Split("/");
                 string[] allPositions = tempTbl[0].Split(';');
                 for (int i = 0; i < allPositions.Length; i++)
@@ -55,7 +55,7 @@ internal class Client
                     try
                     {
                         allPositions[i] = allPositions[i].Replace("[", "").Replace("]", "");
-                        string[] parts = allPositions[i].Split(',');
+                        string[] parts = allPositions[i].Split(';');
                         if (parts.Length == 8)
                         {
                             if (!int.TryParse(parts[0], out int id))
@@ -113,9 +113,9 @@ internal class Client
     /// <param name="camera">toutes les info du joueur</param>
     public static void SendInfo(Camera3D camera)
     {
-        string position = camera.Position.X + "," + camera.Position.Y + "," + camera.Position.Z + "," +
-                          camera.Target.X +
-                          "," + camera.Target.Y + "," + camera.Target.Z + "," + Player.Nom + "," + sendFire;
+        string position = float.Round(camera.Position.X,4) + ";" + float.Round(camera.Position.Y,4) + ";" + float.Round(camera.Position.Z,4) + ";" + 
+                          float.Round(camera.Target.X,4) + ";" + float.Round(camera.Target.Y,4) + ";" + float.Round(camera.Target.Z,4) + ";" + 
+                          Player.Nom + ";" + sendFire;
         sendFire = false;
         byte[] data = Encoding.UTF8.GetBytes(position);
         stream.Write(data, 0, data.Length);

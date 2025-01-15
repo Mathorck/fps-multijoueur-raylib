@@ -31,7 +31,7 @@ public class Player
     private float life;
 
     public Vector3 Position;
-    private string pseudo;
+    public string Pseudo;
     private readonly Texture2D pseudoTexture;
     public Vector3 Rotation;
 
@@ -46,12 +46,12 @@ public class Player
         life = 100f;
         HitBox = new BoundingBox(Position, Size);
         Rotation = new Vector3(xRot, yRot, zRot);
-        this.pseudo = pseudo;
+        this.Pseudo = pseudo;
 
         rotation = float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi);
 
         int Textsize = 20;
-        Image img = GenImageText(MeasureText(this.pseudo, Textsize), Textsize, this.pseudo);
+        Image img = GenImageText(MeasureText(this.Pseudo, Textsize), Textsize, this.Pseudo);
         pseudoTexture = LoadTextureFromImage(img);
     }
 
@@ -63,7 +63,7 @@ public class Player
         life = player.life;
         HitBox = player.HitBox;
         Rotation = player.Rotation;
-        pseudo = player.pseudo;
+        Pseudo = player.Pseudo;
     }
 
     /// <summary>
