@@ -28,7 +28,7 @@ internal class Server
         ping.Start();
 
 
-        var acceptThread = new Thread(AcceptClients);
+        Thread acceptThread = new(AcceptClients);
         acceptThread.Start();
     }
 
@@ -38,12 +38,12 @@ internal class Server
         {
             ping.AcceptTcpClient();
 
-            var client = server.AcceptTcpClient();
+            TcpClient client = server.AcceptTcpClient();
             clients[clientCounter] = client;
             //                               | pos | rot |
             playerPositions[clientCounter] = "0,0,0,0,2,0,false"; // Position initiale
-            Console.WriteLine("Nouveau client connecté : " + clientCounter);
-            var clientThread = new Thread(HandleClient);
+            Client.ConsoleSuccess("Nouveau client connecté : " + clientCounter);
+            Thread clientThread = new(HandleClient);
             clientThread.Start(clientCounter);
             clientCounter++;
         }
@@ -51,32 +51,34 @@ internal class Server
 
     private static void HandleClient(object clientIdObj)
     {
-        var clientId = (int)clientIdObj;
-        var client = clients[clientId];
+        int clientId = (int)clientIdObj;
+        TcpClient client = clients[clientId];
 
-        var stream = client.GetStream();
-        var buffer = new byte[256];
+        NetworkStream stream = client.GetStream();
+        byte[] buffer = new byte[256];
 
         try
         {
             while (true)
             {
-                var bytesRead = stream.Read(buffer, 0, buffer.Length);
+                int bytesRead = stream.Read(buffer, 0, buffer.Length);
                 if (bytesRead > 0)
                 {
-                    var message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    Console.WriteLine($"Client {clientId}: {message}");
+                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    Client.ConsoleInfo($"Client {clientId}: {message}");
 
                     // Mise à jour de la position du joueur
                     playerPositions[clientId] = message;
 
                     // Diffuser les positions de tous les joueurs
-                    foreach (var Client in clients)
+                    foreach (KeyValuePair<int, TcpClient> Client in clients)
                     {
-                        var response = "";
+                        string response = "";
                         foreach (KeyValuePair<int, string> pair in playerPositions)
+                        {
                             if (!(pair.Key == Client.Key))
                                 response += "[" + pair.Key + ", " + pair.Value + "]; ";
+                        }
 
                         sendPrivately(response, Client.Value);
                     }
@@ -85,7 +87,7 @@ internal class Server
         }
         catch
         {
-            Console.WriteLine("Client déconnecté : " + clientId);
+            Client.ConsoleError("Client déconnecté : " + clientId);
             clients.Remove(clientId);
             playerPositions.Remove(clientId);
         }
@@ -98,7 +100,7 @@ internal class Server
     /// <param name="recever">Appareil qui reçoit</param>
     private static void sendPrivately(string message, TcpClient recever)
     {
-        var data = Encoding.UTF8.GetBytes(message);
+        byte[] data = Encoding.UTF8.GetBytes(message);
         recever.GetStream().Write(data, 0, data.Length);
     }
 
@@ -108,7 +110,7 @@ internal class Server
     /// <param name="message"></param>
     private static void BroadcastMessage(string message)
     {
-        var data = Encoding.UTF8.GetBytes(message);
-        foreach (var client in clients.Values) client.GetStream().Write(data, 0, data.Length);
+        byte[] data = Encoding.UTF8.GetBytes(message);
+        foreach (TcpClient client in clients.Values) client.GetStream().Write(data, 0, data.Length);
     }
 }

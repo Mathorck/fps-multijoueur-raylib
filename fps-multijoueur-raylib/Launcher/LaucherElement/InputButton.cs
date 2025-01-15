@@ -8,6 +8,7 @@ namespace DeadOpsArcade3D.Launcher.LauncherElement;
 /// </summary>
 public class InputButton
 {
+    private readonly bool isSecret;
     public Color borderColor;
     public Color borderColorActive;
     public Color btnColor;
@@ -17,7 +18,6 @@ public class InputButton
 
     public string inputText;
     private bool isActive;
-    private readonly bool isSecret;
     public int maxInputChar;
     public Rectangle rectangle;
     public string text;
@@ -97,7 +97,7 @@ public class InputButton
         else
         {
             DrawButton();
-            var maskedInput = new string('*', inputText.Length);
+            string? maskedInput = new('*', inputText.Length);
             DrawText(maskedInput, (int)(rectangle.X + Launcher.FONT_SIZE),
                 (int)(rectangle.Y + rectangle.Height / 2 - Launcher.FONT_SIZE / 2), Launcher.FONT_SIZE,
                 isActive ? fontColorActive : fontColor);
@@ -118,7 +118,7 @@ public class InputButton
     /// <param name="Thick">L'épaisseur des bordures du bouton.</param>
     public void DrawBorder(float Thick)
     {
-        var borderColorToUse = isActive ? borderColorActive : borderColor;
+        Color borderColorToUse = isActive ? borderColorActive : borderColor;
         DrawRectangleLinesEx(rectangle, Thick, borderColorToUse);
     }
 
@@ -127,8 +127,8 @@ public class InputButton
     /// </summary>
     private void DrawButton()
     {
-        var backgroundColor = isActive ? btnColorActive : btnColor;
-        var textColor = isActive ? fontColorActive : fontColor;
+        Color backgroundColor = isActive ? btnColorActive : btnColor;
+        Color textColor = isActive ? fontColorActive : fontColor;
 
         DrawRectangleRec(rectangle, backgroundColor);
         DrawText(text, (int)(rectangle.X - MeasureText(text, Launcher.FONT_SIZE) - Launcher.FONT_SIZE),

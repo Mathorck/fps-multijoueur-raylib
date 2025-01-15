@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using DeadOpsArcade3D.Launcher.LauncherElement;
+using DeadOpsArcade3D.Multiplayer;
 using MySql.Data.MySqlClient;
 using static Raylib_cs.Raylib;
 
@@ -40,16 +41,17 @@ public class Login
         bool close = false, isRememberMe = false;
 
         // Définition des rectangles pour les champs de saisie
-        Rectangle recTextBoxUsername = new(GetScreenWidth() / 2 - INPUT_RECTANGLE_WIDTH / 2, GetScreenHeight() / 3,
+        Rectangle recTextBoxUsername = new(GetScreenWidth() * 0.5f - INPUT_RECTANGLE_WIDTH * 0.5f,
+            GetScreenHeight() / 3,
             INPUT_RECTANGLE_WIDTH, INPUT_RECTANGLE_HEIGHT);
-        Rectangle recTextBoxPassword = new(GetScreenWidth() / 2 - INPUT_RECTANGLE_WIDTH / 2,
+        Rectangle recTextBoxPassword = new(GetScreenWidth() * 0.5f - INPUT_RECTANGLE_WIDTH * 0.5f,
             recTextBoxUsername.Y + INPUT_RECTANGLE_HEIGHT + FONT_SIZE, INPUT_RECTANGLE_WIDTH, INPUT_RECTANGLE_HEIGHT);
-        Rectangle recSignin = new(GetScreenWidth() / 2 - INPUT_RECTANGLE_WIDTH / 2,
+        Rectangle recSignin = new(GetScreenWidth() * 0.5f - INPUT_RECTANGLE_WIDTH * 0.5f,
             (int)(recTextBoxPassword.Y + INPUT_RECTANGLE_HEIGHT + FONT_SIZE), INPUT_RECTANGLE_WIDTH,
             INPUT_RECTANGLE_HEIGHT);
-        Rectangle recSingup = new(GetScreenWidth() / 2 - INPUT_RECTANGLE_WIDTH / 2,
+        Rectangle recSingup = new(GetScreenWidth() * 0.5f - INPUT_RECTANGLE_WIDTH * 0.5f,
             (int)(recSignin.Y + INPUT_RECTANGLE_HEIGHT + FONT_SIZE), INPUT_RECTANGLE_WIDTH, INPUT_RECTANGLE_HEIGHT);
-        Rectangle recRememberMe = new(GetScreenWidth() / 2 - INPUT_RECTANGLE_WIDTH / 2,
+        Rectangle recRememberMe = new(GetScreenWidth() * 0.5f - INPUT_RECTANGLE_WIDTH * 0.5f,
             (int)(recSingup.Y + INPUT_RECTANGLE_HEIGHT + FONT_SIZE), INPUT_RECTANGLE_HEIGHT, INPUT_RECTANGLE_HEIGHT);
 
         // Initialisation des champs de saisie et des boutons
@@ -63,15 +65,15 @@ public class Login
         Boutton Singup = new(recSingup, TEXT_SINGUP, Color.Blue, Color.White, Color.DarkBlue, Color.White);
         List<Boutton> Bouttons = new() { Signin, Singup };
 
-        var framesCounter = 0;
-        var erreur = "";
+        int framesCounter = 0;
+        string erreur = "";
 
         // Charger les informations de connexion si elles existent
         LoadRememberedLoginInfo(ref textBoxUsername, ref textBoxPassword, ref isRememberMe);
 
         while (!IsKeyPressed(KeyboardKey.Enter) && !WindowShouldClose() && !close && !IsLoggedIn)
         {
-            var key = GetCharPressed();
+            int key = GetCharPressed();
             bool isHoverInput = false, isHoverButton = false;
 
             // Vérification des clics sur les boutons et champs de saisie
@@ -95,12 +97,12 @@ public class Login
         ref bool isRememberMe)
     {
         using StreamReader sr = new("LoginInfo/LoginInfo.txt");
-        var RememberUsername = sr.ReadLine();
-        var RememberPassword = sr.ReadLine();
-        if (RememberUsername != null && RememberPassword != null)
+        string? rememberUsername = sr.ReadLine();
+        string? rememberPassword = sr.ReadLine();
+        if (rememberUsername != null && rememberPassword != null)
         {
-            textBoxUsername.inputText = RememberUsername;
-            textBoxPassword.inputText = RememberPassword;
+            textBoxUsername.inputText = rememberUsername;
+            textBoxPassword.inputText = rememberPassword;
             isRememberMe = true;
         }
     }
@@ -147,7 +149,7 @@ public class Login
             SetMouseCursor(MouseCursor.Default);
 
         // Saisie du texte dans les champs
-        foreach (var b in new[] { textBoxUsername, textBoxPassword })
+        foreach (InputButton b in new[] { textBoxUsername, textBoxPassword })
         {
             if (b.CheckCollision(GetMousePosition()))
             {
@@ -171,7 +173,7 @@ public class Login
     {
         DrawText(TEXT_TOP, (GetScreenWidth() - MeasureText(TEXT_TOP, 200)) / 2, 100, 200, Color.Black);
 
-        foreach (var b in Bouttons) b.Draw();
+        foreach (Boutton b in Bouttons) b.Draw();
 
         if (isRememberMe)
             DrawRectangleRec(recRememberMe, Color.Blue);
@@ -189,17 +191,17 @@ public class Login
     /// </summary>
     private static string verifyInputCreate(string username, string password)
     {
-        var s = verifyInput(username, password);
+        string s = verifyInput(username, password);
         if (!string.IsNullOrEmpty(s))
             return s;
-        
+
         Game.GameElement.Player.Nom = username;
 
         using (MySqlConnection conn = new(Launcher.connectionString))
         {
             conn.Open();
             MySqlCommand cmd = new($"SELECT Pseudo FROM user WHERE Pseudo = \"{username}\"", conn);
-            using (var reader = cmd.ExecuteReader())
+            using (MySqlDataReader? reader = cmd.ExecuteReader())
             {
                 if (reader.HasRows)
                     return "Ce pseudo est déjà utilisé par un autre joueur";
@@ -213,10 +215,10 @@ public class Login
     /// </summary>
     private static string verifyInputConnect(string username, string password)
     {
-        var s = verifyInput(username, password);
+        string s = verifyInput(username, password);
         if (!string.IsNullOrEmpty(s))
             return s;
-        
+
         Game.GameElement.Player.Nom = username;
 
         using (MySqlConnection conn = new(Launcher.connectionString))
@@ -224,7 +226,7 @@ public class Login
             conn.Open();
             MySqlCommand cmd =
                 new($"SELECT pseudo FROM user WHERE pseudo = \"{username}\" AND MotDePasse = \"{password}\"", conn);
-            using (var reader = cmd.ExecuteReader())
+            using (MySqlDataReader? reader = cmd.ExecuteReader())
             {
                 if (reader.HasRows)
                     return "";
@@ -267,7 +269,7 @@ public class Login
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Client.ConsoleError(ex.ToString());
             return false;
         }
     }
@@ -282,13 +284,13 @@ public class Login
             using (MySqlConnection conn = new(Launcher.connectionString))
             {
                 conn.Open();
-                MySqlCommand cmd =
-                    new(
-                        $"SELECT Id, Pseudo, MotDePasse FROM user WHERE Pseudo = \"{Username}\" AND MotDePasse = \"{Password}\";",
-                        conn);
-                using (var adapter = new MySqlDataAdapter(cmd))
+                MySqlCommand cmd = new(
+                    $"SELECT Id, Pseudo, MotDePasse FROM user WHERE Pseudo = \"{Username}\" AND MotDePasse = \"{Password}\";",
+                    conn
+                );
+                using (MySqlDataAdapter adapter = new(cmd))
                 {
-                    var dt = new DataTable();
+                    DataTable dt = new();
                     adapter.Fill(dt);
                     if (dt.Rows.Count == 1)
                     {
@@ -316,7 +318,7 @@ public class Login
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            Client.ConsoleError(ex.ToString());
             return false;
         }
 

@@ -39,6 +39,11 @@ public class Bullet
         if (Position.Y <= 0) return true;
         return false;
     }
+    
+    public static void Unload()
+    {
+        Raylib.UnloadModel(bulletModel);
+    }
 
     /// <summary>
     ///     Méthode qui affiche toutes les balles de la liste
@@ -46,7 +51,7 @@ public class Bullet
     /// <param name="bullets">Liste des balles</param>
     public static void Draw(List<Bullet> bullets)
     {
-        for (var b = 0; b < bullets.Count; b++)
+        for (int b = 0; b < bullets.Count; b++)
         {
             Raylib.DrawModelEx(
                 bulletModel, // Le modèle de la balle

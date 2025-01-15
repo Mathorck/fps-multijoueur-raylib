@@ -2,8 +2,8 @@ namespace DeadOpsArcade3D.Game;
 
 public class Timer
 {
-    private float time;
     private readonly float timeToWait;
+    private float time;
 
     public Timer(float timeToWait)
     {

@@ -104,7 +104,7 @@ public class ServerObject
         DrawRectangleRec(rec, Color.DarkGray);
 
         // Afficher les informations du serveur (ID, nom, IP, nombre de joueurs)
-        var serverInfo = $"{id}  {nom} {ip} Joueurs : {nbJoueur}";
+        string serverInfo = $"{id}  {nom} {ip} Joueurs : {nbJoueur}";
 
         DrawText(
             serverInfo,

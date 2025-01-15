@@ -5,9 +5,9 @@ namespace DeadOpsArcade3D.Game.GameElement;
 
 public class Weapon
 {
-    public float damage;
     private readonly Timer fireTimer = new(0.15f);
     private readonly Timer reloadTimer = new(1.5f);
+    public float damage;
 
     public Weapon()
     {

@@ -9,25 +9,12 @@ namespace DeadOpsArcade3D.Launcher;
 
 public class Launcher
 {
-    
-    #region Constantes
-
-    /// <summary>
-    ///     Textes des boutons et autres constantes
-    /// </summary>
-    private const string TEXT_HEBERGER = "Heberger", TEXT_PLAY = "Jouer"; // ↩
-
-
-    private const int MAX_INPUT_CHARS_NAME = 20;
-
-    #endregion
-
     #region Boutons
 
     private static Rectangle recBack = new(0, 0, GetScreenWidth() / 15, GetScreenHeight() / 15);
 
     #endregion
-    
+
     /// <summary>
     ///     Chaîne de connexion au serveur MySQL
     /// </summary>
@@ -64,8 +51,10 @@ public class Launcher
         InitWindow(GetScreenWidth(), GetScreenHeight(), "Launcher");
         SetTargetFPS(60);
 
-        var close = false;
-        var ip = "";
+        bool close = false;
+        bool joinServer = false;
+        string joinIp = "127.0.0.1";
+        string ip = "";
         servers = new List<ServerObject>();
 
         Task.Run(GetServers);
@@ -76,20 +65,23 @@ public class Launcher
             switch (currentPage)
             {
                 case LauncherPage.Heberger:
-                    Heberger(ref ip);
+                    Heberger(ref ip, ref close, ref joinServer);
                     break;
 
                 case LauncherPage.Play:
-                    Play(ref close);
+                    Play(ref joinIp, ref close, ref joinServer);
                     break;
 
                 default:
-                    CloseWindow();
+                    close = true;
                     break;
             }
         }
 
         CloseWindow();
+
+        if (joinServer)
+            Client.StartClient(joinIp, Program.DEFAULT_PORT);
     }
 
     /// <summary>
@@ -136,15 +128,16 @@ public class Launcher
     ///     Affiche la page "Jouer"
     /// </summary>
     /// <param name="close">Indicateur pour fermer la fenêtre</param>
-    private static void Play(ref bool close)
+    private static void Play(ref string joinIp, ref bool close, ref bool joinServer)
     {
         BeginDrawing();
         TopButtons(TEXT_PLAY);
 
-        var mouseCursor = MouseCursor.Default;
+        MouseCursor mouseCursor = MouseCursor.Default;
 
-        foreach (var s in servers)
+        for (int i = 0; i < servers.Count - 1; i++)
         {
+            ServerObject? s = servers[i];
             s.Draw();
 
             if (s.CheckCollision(GetMousePosition()))
@@ -153,8 +146,8 @@ public class Launcher
                 if (IsMouseButtonDown(MouseButton.Left))
                 {
                     close = true;
-                    CloseWindow();
-                    s.join();
+                    joinServer = true;
+                    joinIp = s.ip;
                 }
             }
         }
@@ -167,11 +160,11 @@ public class Launcher
     ///     Affiche la page "Heberger"
     /// </summary>
     /// <param name="ip">Entrée de l'adresse IP du serveur</param>
-    private static void Heberger(ref string ip)
+    private static void Heberger(ref string ip, ref bool close, ref bool joinServer)
     {
-        var textBox = new Rectangle(GetScreenWidth() * 0.5f - 500, GetScreenHeight() * 0.5f - 25, 1000, 50);
-        var framesCounter = 0;
-        var key = GetCharPressed();
+        Rectangle textBox = new(GetScreenWidth() * 0.5f - 500, GetScreenHeight() * 0.5f - 25, 1000, 50);
+        int framesCounter = 0;
+        int key = GetCharPressed();
 
         if (key >= 32 && key <= 125 && ip.Count() < MAX_INPUT_CHARS_NAME)
             ip += (char)key; // Ajouter un caractère à la chaîne
@@ -224,8 +217,10 @@ public class Launcher
 
         if (IsKeyPressed(KeyboardKey.Enter))
         {
+            close = true;
             SaveServer(ip);
             Server.StartServer(Program.DEFAULT_PORT);
+            joinServer = true;
         }
     }
 
@@ -235,21 +230,23 @@ public class Launcher
     /// <param name="ip">Adresse IP du serveur</param>
     private static void SaveServer(string ip)
     {
-        using (var conn = new MySqlConnection(connectionString))
+        using (MySqlConnection? conn = new(connectionString))
         {
             conn.Open();
 
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            var localIp = "0.0.0.0";
+            IPHostEntry? host = Dns.GetHostEntry(Dns.GetHostName());
+            string? localIp = "0.0.0.0";
 
-            foreach (var ipAddress in host.AddressList)
+            foreach (IPAddress? ipAddress in host.AddressList)
+            {
                 if (ipAddress.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(ipAddress))
                 {
                     localIp = ipAddress.ToString();
                     break;
                 }
+            }
 
-            var cmd = new MySqlCommand($"INSERT INTO serveur (Ip, Nom) VALUES ('{localIp}', '{ip}')", conn);
+            MySqlCommand? cmd = new($"INSERT INTO serveur (Ip, Nom) VALUES ('{localIp}', '{ip}')", conn);
             cmd.ExecuteNonQuery();
             conn.Close();
         }
@@ -269,9 +266,9 @@ public class Launcher
             conn.Open();
             MySqlCommand requete = new("SELECT Id, Ip, Nom, Nombre_Joueur FROM serveur", conn);
 
-            using (var reader = requete.ExecuteReader())
+            using (MySqlDataReader? reader = requete.ExecuteReader())
             {
-                var nbPassage = 0;
+                int nbPassage = 0;
 
                 while (reader.Read() && nbPassage < NB_SERVER_AFFICHER)
                 {
@@ -292,10 +289,11 @@ public class Launcher
     /// </summary>
     private static void CleanupServers()
     {
-        for (var i = 0; i < servers.Count; i++)
+        for (int i = 0; i < servers.Count; i++)
+        {
             try
             {
-                var client = new TcpClient();
+                TcpClient? client = new();
                 client.Connect(servers[i].ip, Program.DEFAULT_PORT + 1);
                 client.Close();
             }
@@ -310,6 +308,7 @@ public class Launcher
                     i--;
                 }
             }
+        }
     }
 
     /// <summary>
@@ -364,4 +363,15 @@ public class Launcher
         }
     }
 
+    #region Constantes
+
+    /// <summary>
+    ///     Textes des boutons et autres constantes
+    /// </summary>
+    private const string TEXT_HEBERGER = "Heberger", TEXT_PLAY = "Jouer"; // ↩
+
+
+    private const int MAX_INPUT_CHARS_NAME = 20;
+
+    #endregion
 }

@@ -25,29 +25,34 @@ public class Player
     public static float Bullet = 30;
     public static string Nom = "Player";
 
-    public int animCurrentFrame;
-    public int animIndex;
-    public BoundingBox HitBox;
-    public float Life;
-    public string Pseudo;
+    private int animCurrentFrame;
+    private int animIndex;
+    private BoundingBox hitBox;
+    private float life;
 
     public Vector3 Position;
+    private string pseudo;
+    private readonly Texture2D pseudoTexture;
     public Vector3 Rotation;
 
     public Vector3 Size;
     public float Speed;
 
-    public Player(float x, float y, float z, float xRot, float yRot, float zRot,string pseudo)
+    public Player(float x, float y, float z, float xRot, float yRot, float zRot, string pseudo)
     {
         Position = new Vector3(x, y, z);
         Size = GetModelBoundingBox(DefaultModel).Max * 0.3f;
         Speed = 1f;
-        Life = 100f;
-        HitBox = new BoundingBox(Position, Size);
+        life = 100f;
+        hitBox = new BoundingBox(Position, Size);
         Rotation = new Vector3(xRot, yRot, zRot);
-        Pseudo = pseudo;
+        this.pseudo = pseudo;
 
         rotation = float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi);
+
+        int Textsize = 20;
+        Image img = GenImageText(MeasureText(this.pseudo, Textsize), Textsize, this.pseudo);
+        pseudoTexture = LoadTextureFromImage(img);
     }
 
     public Player(Player player)
@@ -55,9 +60,10 @@ public class Player
         Position = player.Position;
         Size = player.Size;
         Speed = player.Speed;
-        Life = player.Life;
-        HitBox = player.HitBox;
+        life = player.life;
+        hitBox = player.hitBox;
         Rotation = player.Rotation;
+        pseudo = player.pseudo;
     }
 
     /// <summary>
@@ -67,18 +73,13 @@ public class Player
     public static void DrawAll(List<Player> playerList)
     {
         if (playerList == null || playerList.Count == 0)
-        {
-            Client.ConsoleError("La liste des joueurs est vide ou null.");
+            //Client.ConsoleError("La liste des joueurs est vide ou null.");
             return;
-        }
 
         try
         {
-            for (var i = 0; i < playerList.Count; i++)
-            {
-                playerList[i].Draw();
-                //playerList[i].Animation();
-            }
+            for (int i = 0; i < playerList.Count; i++) playerList[i].Draw();
+            //playerList[i].Animation();
         }
         catch (Exception e)
         {
@@ -92,10 +93,9 @@ public class Player
     /// <param name="playerList">Liste des Joueurs</param>
     public void Draw()
     {
-        int Textsize = 20;
-        Image img = GenImageText(MeasureText(Pseudo,Textsize),Textsize,Pseudo);
-        Texture2D texture2D = LoadTextureFromImage(img);
-        DrawBillboard(GameLoop.camera, texture2D, Position, 0.5f, Color.White);
+        DrawBillboard(GameLoop.camera, pseudoTexture, Position, 0.5f, Color.White);
+
+
         DrawModelEx(
             DefaultModel, // Model to draw
             Position - new Vector3(0, 0.39f, 0), // Position in 3D space
@@ -119,11 +119,11 @@ public class Player
         Gui.DebugContent.Add(
             $"Position: [{float.Round(camera.Position.X, 2)} | {float.Round(camera.Position.Y, 2)} | {float.Round(camera.Position.Z, 2)}]");
 
-        var oldCamPos = camera.Position;
-        var initialTarget = camera.Target - camera.Position;
-        var deplacement = new Vector3();
+        Vector3 oldCamPos = camera.Position;
+        Vector3 initialTarget = camera.Target - camera.Position;
+        Vector3 deplacement = new();
 
-        var speed = IsKeyDown(KeyboardKey.LeftShift) ? SPRINT_SPEED : PLAYER_SPEED;
+        float speed = IsKeyDown(KeyboardKey.LeftShift) ? SPRINT_SPEED : PLAYER_SPEED;
 
         deplacement.X = IsKeyDown(KeyboardKey.W) * speed - IsKeyDown(KeyboardKey.S) * PLAYER_SPEED;
         deplacement.Y = IsKeyDown(KeyboardKey.D) * PLAYER_SPEED - IsKeyDown(KeyboardKey.A) * PLAYER_SPEED;
@@ -144,43 +144,32 @@ public class Player
         );
         Vector2 playerPos = new(camera.Position.X, camera.Position.Z);
 
-        var playerCellX = (int)(playerPos.X - Map.mapPosition.X + 0.5f);
-        var playerCellY = (int)(playerPos.Y - Map.mapPosition.Z + 0.5f);
+        int playerCellX = (int)(playerPos.X - Map.MapPosition.X + 0.5f);
+        int playerCellY = (int)(playerPos.Y - Map.MapPosition.Z + 0.5f);
 
         if (playerCellX < 0)
             playerCellX = 0;
-        else if (playerCellX >= Map.cubicmap.Width) playerCellX = Map.cubicmap.Width - 1;
+        else if (playerCellX >= Map.Cubicmap.Width) playerCellX = Map.Cubicmap.Width - 1;
 
         if (playerCellY < 0)
             playerCellY = 0;
-        else if (playerCellY >= Map.cubicmap.Height) playerCellY = Map.cubicmap.Height - 1;
+        else if (playerCellY >= Map.Cubicmap.Height) playerCellY = Map.Cubicmap.Height - 1;
 
-        for (var y = 0; y < Map.cubicmap.Height; y++)
-        for (var x = 0; x < Map.cubicmap.Width; x++)
+        for (int y = 0; y < Map.Cubicmap.Height; y++)
+        for (int x = 0; x < Map.Cubicmap.Width; x++)
         {
-            var mapPixelsData = Map.MapPixels;
+            Color* mapPixelsData = Map.MapPixels;
 
             // Collision: Color.white pixel, only check R channel
             Rectangle rec = new(
-                Map.mapPosition.X - 0.5f + x * 1.0f,
-                Map.mapPosition.Z - 0.5f + y * 1.0f,
+                Map.MapPosition.X - 0.5f + x * 1.0f,
+                Map.MapPosition.Z - 0.5f + y * 1.0f,
                 1.0f,
                 1.0f
             );
 
             bool colisionX = false, colisionZ = false;
 
-
-            //if (camera.Position.X - oldCamPos.X > 0)
-            //    colisionX = CheckCollisionCircleRec(new(camera.Position.X, camera.Position.Z), 0.1f, rec);
-            //else
-            //    colisionX = CheckCollisionCircleRec(new(camera.Position.X, camera.Position.Z), 0.1f, rec);
-            //if (camera.Position.Z - oldCamPos.Z > 0)
-            //    colisionZ = CheckCollisionCircleRec(new(camera.Position.Z, camera.Position.Z), 0.1f, rec);
-            //else
-            //    colisionZ = CheckCollisionCircleRec(new(camera.Position.Z, camera.Position.Z), 0.1f, rec);
-            //colisionX = CheckCollisionCircleRec(new(camera.Position.X, 0), 0.1f, rec);
-            //colisionZ = CheckCollisionCircleRec(new(0, camera.Position.Z), 0.1f, rec);
             const float bSize = 0.2f, sSize = 0.1f;
 
             Rectangle recx = new(camera.Position.X - bSize / 2, camera.Position.Z - sSize / 2,
@@ -195,7 +184,7 @@ public class Player
             colisionZ = CheckCollisionRecs(recz, rec);
 
 
-            if (mapPixelsData[y * Map.cubicmap.Width + x].R == 255)
+            if (mapPixelsData[y * Map.Cubicmap.Width + x].R == 255)
             {
                 if (colisionX)
                 {
@@ -209,13 +198,6 @@ public class Player
                     camera.Target = camera.Position + initialTarget;
                 }
             }
-            //bool collision = CheckCollisionCircleRec(new Vector2(camera.Position.X, camera.Position.Z), 0.1f, rec);
-            //if ((mapPixelsData[y * Map.cubicmap.Width + x].R == 255) && collision)
-            //{
-            //    // Collision detected, reset camera position
-            //    camera.Position = oldCamPos;
-            //    camera.Target = camera.Position + initialTarget;
-            //}
         }
     }
 
@@ -223,16 +205,16 @@ public class Player
     public void Animation()
     {
         //Default Character
-        var fileName = "ressources/model3d/character/robot.glb";
-        var animCount = 0;
-        var fileNameBytes = new sbyte[fileName.Length + 1];
-        for (var i = 0; i < fileName.Length; i++) fileNameBytes[i] = (sbyte)fileName[i];
+        string fileName = "ressources/model3d/character/robot.glb";
+        int animCount = 0;
+        sbyte[] fileNameBytes = new sbyte[fileName.Length + 1];
+        for (int i = 0; i < fileName.Length; i++) fileNameBytes[i] = (sbyte)fileName[i];
         fileNameBytes[fileName.Length] = 0;
         unsafe
         {
             fixed (sbyte* pFileName = fileNameBytes)
             {
-                var characterAnimations = LoadModelAnimations(pFileName, &animCount);
+                ModelAnimation* characterAnimations = LoadModelAnimations(pFileName, &animCount);
 
                 Console.WriteLine("Nombre d'animations chargées : " + animCount);
 
@@ -277,40 +259,10 @@ public class Player
                 if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Six)) animIndex = 13;
 
                 // Update model animation
-                var anim = characterAnimations[animIndex];
+                ModelAnimation anim = characterAnimations[animIndex];
                 animCurrentFrame = (animCurrentFrame + 1) % anim.FrameCount;
                 UpdateModelAnimation(DefaultModel, anim, animCurrentFrame);
             }
-        }
-    }
-
-    /// <summary>
-    ///     Méthode qui gère le saut et la chute du joueur
-    /// </summary>
-    /// <param name="camera"></param>
-    private static void Jumping(ref Camera3D camera)
-    {
-        if (canJump && !isJumping && IsKeyDown(KeyboardKey.Space))
-            isJumping = true;
-
-        if (isJumping)
-        {
-            var jumpProgress = jump / JUMP_HEIGHT;
-            var jumpVelocity = JUMP_SPEED * (1f - jumpProgress + 0.1f);
-            camera.Position.Y += jumpVelocity;
-            jump += jumpVelocity;
-            if (jump >= JUMP_HEIGHT)
-            {
-                isJumping = false;
-                jump = 0;
-            }
-        }
-        else if (canFall && !isJumping)
-        {
-            var fallProgress = jump / JUMP_HEIGHT;
-            var fallVelocity = JUMP_SPEED * (fallProgress + 0.1f);
-            camera.Position.Y -= fallVelocity;
-            jump += fallVelocity;
         }
     }
 }

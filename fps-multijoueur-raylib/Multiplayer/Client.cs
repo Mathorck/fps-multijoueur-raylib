@@ -21,11 +21,11 @@ internal class Client
     {
         client = new TcpClient();
         client.Connect(host, port);
-        Console.WriteLine("Connecté au serveur");
+        ConsoleSuccess("Connecté au serveur");
         stream = client.GetStream();
 
 
-        var receiveThread = new Thread(ReceiveMessages);
+        Thread receiveThread = new(ReceiveMessages);
         receiveThread.Start();
 
         GameLoop.StartGame();
@@ -36,51 +36,52 @@ internal class Client
     /// </summary>
     private static void ReceiveMessages()
     {
-        var Default = new Weapon();
-        var buffer = new byte[256];
+        Weapon Default = new();
+        byte[] buffer = new byte[256];
         while (true)
         {
-            var bytesRead = stream.Read(buffer, 0, buffer.Length);
+            int bytesRead = stream.Read(buffer, 0, buffer.Length);
             if (bytesRead > 0)
             {
-                var message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                Console.WriteLine("Message reçu : " + message);
+                string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                ConsoleInfo("Message reçu : " + message);
 
                 // Mise à jour des positions des autres joueurs
                 //Player.PlayerList.Clear();
                 string[] tempTbl = message.Split("/");
                 string[] allPositions = tempTbl[0].Split(';');
-                for (var i = 0; i < allPositions.Length; i++)
+                for (int i = 0; i < allPositions.Length; i++)
+                {
                     try
                     {
                         allPositions[i] = allPositions[i].Replace("[", "").Replace("]", "");
                         string[] parts = allPositions[i].Split(',');
                         if (parts.Length == 8)
                         {
-                            if (!int.TryParse(parts[0], out var id))
+                            if (!int.TryParse(parts[0], out int id))
                                 throw new ArgumentException("Erreur");
 
-                            if (!float.TryParse(parts[1], out var X))
+                            if (!float.TryParse(parts[1], out float X))
                                 throw new ArgumentException("Erreur");
 
-                            if (!float.TryParse(parts[2], out var Y))
+                            if (!float.TryParse(parts[2], out float Y))
                                 throw new ArgumentException("Erreur");
 
-                            if (!float.TryParse(parts[3], out var Z))
+                            if (!float.TryParse(parts[3], out float Z))
                                 throw new ArgumentException("Erreur");
 
-                            if (!float.TryParse(parts[4], out var Xrot))
+                            if (!float.TryParse(parts[4], out float Xrot))
                                 throw new ArgumentException("Erreur");
 
-                            if (!float.TryParse(parts[5], out var Yrot))
+                            if (!float.TryParse(parts[5], out float Yrot))
                                 throw new ArgumentException("Erreur");
 
-                            if (!float.TryParse(parts[6], out var Zrot))
+                            if (!float.TryParse(parts[6], out float Zrot))
                                 throw new ArgumentException("Erreur");
 
-                            if (!bool.TryParse(parts[7], out var Fired))
+                            if (!bool.TryParse(parts[7], out bool Fired))
                                 throw new ArgumentException("Erreur");
-                            
+
                             if (string.IsNullOrEmpty(parts[8]))
                                 throw new ArgumentException("Erreur");
                             string pseudo = parts[8];
@@ -99,8 +100,9 @@ internal class Client
                     }
                     catch (Exception e)
                     {
-                        Console.WriteLine(e);
+                        ConsoleError($"Erreur : {e}");
                     }
+                }
             }
         }
     }
@@ -111,10 +113,11 @@ internal class Client
     /// <param name="camera">toutes les info du joueur</param>
     public static void SendInfo(Camera3D camera)
     {
-        var position = camera.Position.X + "," + camera.Position.Y + "," + camera.Position.Z + "," + camera.Target.X +
-                       "," + camera.Target.Y + "," + camera.Target.Z+ "," + Player.Nom + "," + sendFire;
+        string position = camera.Position.X + "," + camera.Position.Y + "," + camera.Position.Z + "," +
+                          camera.Target.X +
+                          "," + camera.Target.Y + "," + camera.Target.Z + "," + Player.Nom + "," + sendFire;
         sendFire = false;
-        var data = Encoding.UTF8.GetBytes(position);
+        byte[] data = Encoding.UTF8.GetBytes(position);
         stream.Write(data, 0, data.Length);
     }
 
@@ -135,6 +138,7 @@ internal class Client
     public static void ConsoleError(string message)
     {
         Consolelog(message, ConsoleColor.Red);
+        Gui.ErrorContent.Add(message);
     }
 
     /// <summary>
@@ -166,7 +170,7 @@ internal class Client
 
     private static void Consolelog(string message, ConsoleColor Color)
     {
-        var old = Console.ForegroundColor;
+        ConsoleColor old = Console.ForegroundColor;
         Console.ForegroundColor = Color;
         Console.WriteLine(message);
         Console.ForegroundColor = old;

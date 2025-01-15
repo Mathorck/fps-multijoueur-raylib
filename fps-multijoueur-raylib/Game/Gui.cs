@@ -7,6 +7,7 @@ namespace DeadOpsArcade3D.Game;
 public static class Gui
 {
     public static List<string> DebugContent = new();
+    public static List<string> ErrorContent = new();
     public static bool IsTabOppened = false;
 
     private static readonly Rectangle healthBar = new(20, GetScreenHeight() - 80, 180, 60);
@@ -30,19 +31,24 @@ public static class Gui
             ShowTab();
         Debug();
     }
+    
+    public static void Unload()
+    {
+        UnloadTexture(wepon);
+    }
 
     /// <summary>
     ///     Affiche le crossair
     /// </summary>
     private static void Crossair()
     {
-        var color = new Color(0, 0, 0, 50);
-        var crossWidth = 20;
-        var crossHeight = 20;
-        var crossWeight = 2;
+        Color color = new(0, 0, 0, 50);
+        int crossWidth = 20;
+        int crossHeight = 20;
+        int crossWeight = 2;
 
-        var width = GetScreenWidth();
-        var height = GetScreenHeight();
+        int width = GetScreenWidth();
+        int height = GetScreenHeight();
 
         DrawRectangle(width / 2 - crossWidth / 2, height / 2 - crossWeight / 2, crossWidth, crossWeight, Color.Black);
 
@@ -51,14 +57,16 @@ public static class Gui
 
     private static void Debug()
     {
-        Console.WriteLine();
-
-        var output = "";
-        foreach (var text in DebugContent) output += text + "\n";
+        string? output = "";
+        foreach (string? text in DebugContent) output += text + "\n";
         DrawText(output, 20, 20, 20, Color.Black);
         DebugContent.Clear();
 
         DrawFPS(10, 10);
+
+        string? output2 = "";
+        foreach (string? text in ErrorContent) output2 += text + "\n";
+        DrawText(output2, 100, 20, 20, Color.Red);
     }
 
     private static void Weapon()
@@ -68,25 +76,25 @@ public static class Gui
 
     private static void MiniMap()
     {
-        DrawTextureEx(Map.cubicmap, new Vector2(GetScreenWidth() - Map.cubicmap.Width * 4 - 20, 20), 0.0f, 4.0f,
+        DrawTextureEx(Map.Cubicmap, new Vector2(GetScreenWidth() - Map.Cubicmap.Width * 4 - 20, 20), 0.0f, 4.0f,
             Color.White);
-        DrawRectangleLines(GetScreenWidth() - Map.cubicmap.Width * 4 - 20, 20, Map.cubicmap.Width * 4,
-            Map.cubicmap.Height * 4, Color.Green);
+        DrawRectangleLines(GetScreenWidth() - Map.Cubicmap.Width * 4 - 20, 20, Map.Cubicmap.Width * 4,
+            Map.Cubicmap.Height * 4, Color.Green);
 
         // Draw player position radar
         Vector2 playerPos = new(GameLoop.camera.Position.X, GameLoop.camera.Position.Z);
 
-        var playerCellX = (int)(playerPos.X - Map.mapPosition.X + 0.5f);
-        var playerCellY = (int)(playerPos.Y - Map.mapPosition.Z + 0.5f);
+        int playerCellX = (int)(playerPos.X - Map.MapPosition.X + 0.5f);
+        int playerCellY = (int)(playerPos.Y - Map.MapPosition.Z + 0.5f);
 
-        DrawRectangle(GetScreenWidth() - Map.cubicmap.Width * 4 - 20 + playerCellX * 4, 20 + playerCellY * 4, 4, 4,
+        DrawRectangle(GetScreenWidth() - Map.Cubicmap.Width * 4 - 20 + playerCellX * 4, 20 + playerCellY * 4, 4, 4,
             Color.Red);
     }
 
     private static void VieAndBullet()
     {
-        var screenWidth = GetScreenWidth();
-        var screenHeight = GetScreenHeight();
+        int screenWidth = GetScreenWidth();
+        int screenHeight = GetScreenHeight();
 
         DrawRectangleRounded(healthBar, 0.3f, 2, new Color(100, 100, 100, 100));
         DrawText("Vie", 40, screenHeight - 50, 20, Color.Yellow);
@@ -98,5 +106,17 @@ public static class Gui
 
     private static void ShowTab()
     {
+        float SHeight = GetScreenHeight() * 0.5f;
+        float SWidth = GetScreenWidth();
+
+        int tabWidth = 400;
+
+        DrawRectangle(
+            (int)(SWidth - tabWidth),
+            50,
+            (int)(SWidth + tabWidth),
+            (int)(SHeight - 100),
+            new Color(0, 0, 0, 100)
+        );
     }
 }

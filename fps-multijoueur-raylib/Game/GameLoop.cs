@@ -39,19 +39,20 @@ public static class GameLoop
             if (IsKeyPressed(KeyboardKey.F11))
                 ToggleFullscreen();
 
+            // Tab
+            Gui.IsTabOppened = IsKeyDown(KeyboardKey.Tab);
+
+
             // Empêche de fermer le jeu avec ESC
-            if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */
-               )
+            if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */)
             {
                 UnloadModel(Player.DefaultModel);
                 ferme = true;
             }
-
-            // Tab
-            Gui.IsTabOppened = IsKeyPressed(KeyboardKey.Tab);
-
-            ///////////////////
+            ///////////////////s
         }
+        
+        UnloadAll();
 
         CloseWindow();
         Environment.Exit(0);
@@ -112,5 +113,14 @@ public static class GameLoop
         EndMode3D();
         Gui.Render();
         EndDrawing();
+    }
+
+    private static void UnloadAll()
+    {
+        Map.Unload(); 
+        Gui.Unload();
+        Bullet.Unload();
+        
+        UnloadModel(Player.DefaultModel);
     }
 }
