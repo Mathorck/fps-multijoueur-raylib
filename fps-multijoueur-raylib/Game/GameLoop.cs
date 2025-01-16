@@ -1,62 +1,66 @@
 using System.Numerics;
+using DeadOpsArcade3D.Game.GameElement;
 using DeadOpsArcade3D.Multiplayer;
 using static Raylib_cs.Raylib;
-using Raylib_cs;
-using DeadOpsArcade3D.Game.GameElement;
 
 namespace DeadOpsArcade3D.Game;
 
 public static class GameLoop
 {
     public static Camera3D camera;
-    
-    private static Weapon weapon = new Weapon();
-    
+
+    private static readonly Weapon weapon = new();
+
     /// <summary>Variable qui dit si la fenêtre devrait se fermer </summary>
-    private static bool ferme = false;
-    
+    private static bool ferme;
+
     // sera sûrement mise dans les param
     public static float sensibilité = 0.05f;
-    
+
     /// <summary>
-    /// Démarre le jeu
+    ///     Démarre le jeu
     /// </summary>
     public static void StartGame()
     {
         InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops 3D");
         ToggleFullscreen();
         SetTargetFPS(60);
-        
+
         SetVariables();
-        
+
         DisableCursor();
 
         while (!ferme)
         {
             Update();
-            
+
             //// Contrôles ////
             // Fullscreen
             if (IsKeyPressed(KeyboardKey.F11))
                 ToggleFullscreen();
-            
+
+            // Tab
+            Gui.IsTabOppened = IsKeyDown(KeyboardKey.Tab);
+
+
             // Empêche de fermer le jeu avec ESC
             if (WindowShouldClose() /*&& !IsKeyDown(KeyboardKey.Escape) C'est un objet magique qui nous servira plus tard */)
             {
                 UnloadModel(Player.DefaultModel);
                 ferme = true;
             }
-
-            ///////////////////
+            ///////////////////s
         }
+        
+        UnloadAll();
 
         CloseWindow();
         Environment.Exit(0);
     }
 
     /// <summary>
-    /// Méthode qui permet d'initialiser toutes les variables après l'affichage de la fenêtre
-    /// pour éviter l'erreur de toi même, tu sais
+    ///     Méthode qui permet d'initialiser toutes les variables après l'affichage de la fenêtre
+    ///     pour éviter l'erreur de toi même, tu sais
     /// </summary>
     private static void SetVariables()
     {
@@ -80,7 +84,7 @@ public static class GameLoop
     }
 
     /// <summary>
-    /// Méthode qui s'éxécute chaque frame
+    ///     Méthode qui s'éxécute chaque frame
     /// </summary>
     private static void Update()
     {
@@ -94,13 +98,13 @@ public static class GameLoop
         BeginMode3D(camera);
 
         Map.Render();
-        
+
         Bullet.Draw(Bullet.BulletsList);
 
         Player.DrawAll(Player.PlayerList);
 
         /*
-        for (int i = 0; i < Player.PlayerList.Count; i++) 
+        for (int i = 0; i < Player.PlayerList.Count; i++)
         {
             Player.PlayerList[i].Animation();
         }
@@ -110,6 +114,13 @@ public static class GameLoop
         Gui.Render();
         EndDrawing();
     }
-    
-    
+
+    private static void UnloadAll()
+    {
+        Map.Unload(); 
+        Gui.Unload();
+        Bullet.Unload();
+        
+        UnloadModel(Player.DefaultModel);
+    }
 }
