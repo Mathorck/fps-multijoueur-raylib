@@ -9,8 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="MySql.Data" Version="9.1.0"/>
-        <PackageReference Include="Raylib-cs" Version="6.1.1"/>
+        <PackageReference Include="MySql.Data" Version="9.1.0" />
+        <PackageReference Include="Raylib-cs" Version="6.1.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -317,15 +317,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="ressources\textures\"/>
+        <Folder Include="ressources\textures\" />
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="LoginInfo\"/>
+        <Folder Include="LoginInfo\" />
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Raylib_cs"/>
+        <Using Include="Raylib_cs" />
     </ItemGroup>
 
 
