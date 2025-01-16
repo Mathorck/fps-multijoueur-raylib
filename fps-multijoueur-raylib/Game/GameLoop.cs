@@ -92,6 +92,9 @@ public static class GameLoop
         Player.Movement(ref camera);
         weapon.Fire(Bullet.BulletsList, camera);
 
+
+        //Player.VerifPacket();s
+
         BeginDrawing();
         ClearBackground(Color.RayWhite);
 
@@ -102,13 +105,6 @@ public static class GameLoop
         Bullet.Draw(Bullet.BulletsList);
 
         Player.DrawAll(Player.PlayerList);
-
-        /*
-        for (int i = 0; i < Player.PlayerList.Count; i++)
-        {
-            Player.PlayerList[i].Animation();
-        }
-        */
 
         EndMode3D();
         Gui.Render();
