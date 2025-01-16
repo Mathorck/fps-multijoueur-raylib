@@ -44,7 +44,7 @@ internal class Client
             if (bytesRead > 0)
             {
                 string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                ConsoleInfo("Message reçu : " + message);
+                ConsoleInfo($"Message brut reçu ({bytesRead} octets) : {message}");
 
                 // Mise à jour des positions des autres joueurs
                 // Player.PlayerList.Clear();
@@ -55,8 +55,8 @@ internal class Client
                     try
                     {
                         allPositions[i] = allPositions[i].Replace("[", "").Replace("]", "");
-                        string[] parts = allPositions[i].Split(':');
-                        if (parts.Length == 8)
+                        string[] parts = allPositions[i].Split(',');
+                        if (parts.Length == 9)
                         {
                             if (!int.TryParse(parts[0], out int id))
                                 throw new ArgumentException("Erreur");
@@ -79,19 +79,29 @@ internal class Client
                             if (!float.TryParse(parts[6], out float Zrot))
                                 throw new ArgumentException("Erreur");
 
-                            if (!bool.TryParse(parts[7], out bool Fired))
+                            if (string.IsNullOrEmpty(parts[7]))
                                 throw new ArgumentException("Erreur");
+                            string pseudo = parts[7];
 
-                            if (string.IsNullOrEmpty(parts[8]))
+                            if (!bool.TryParse(parts[8], out bool Fired))
                                 throw new ArgumentException("Erreur");
-                            string pseudo = parts[8];
 
                             if (id > Player.PlayerList.Count - 1)
+                            {
                                 Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot, pseudo));
+                                continue;
+                            }
+                                
+
+
+
 
                             Player.PlayerList[id].Position = new Vector3(X, Y, Z);
                             Player.PlayerList[id].Rotation = new Vector3(Xrot, Yrot, Zrot);
                             Player.PlayerList[id].Pseudo = pseudo;
+                            //Player.PlayerList[id].NbrDeTickSansReponse = 0;
+
+
 
                             if (Fired)
                                 Bullet.BulletsList.Add(new Bullet(new Vector3(X, Y, Z), new Vector3(Xrot, Yrot, Zrot),
@@ -114,9 +124,9 @@ internal class Client
     /// <param name="camera">toutes les info du joueur</param>
     public static void SendInfo(Camera3D camera)
     {
-        string position = float.Round(camera.Position.X,4) + ":" + float.Round(camera.Position.Y,4) + ":" + float.Round(camera.Position.Z,4) + ":" + 
-                          float.Round(camera.Target.X,4) + ":" + float.Round(camera.Target.Y,4) + ":" + float.Round(camera.Target.Z,4) + ":" + 
-                          Player.Nom + ":" + sendFire;
+        string position = float.Round(camera.Position.X,4) + "," + float.Round(camera.Position.Y,4) + "," + float.Round(camera.Position.Z,4) + "," + 
+                          float.Round(camera.Target.X,4) + "," + float.Round(camera.Target.Y,4) + "," + float.Round(camera.Target.Z,4) + "," + 
+                          Player.Nom + "," + sendFire;
         sendFire = false;
         byte[] data = Encoding.UTF8.GetBytes(position);
         stream.Write(data, 0, data.Length);

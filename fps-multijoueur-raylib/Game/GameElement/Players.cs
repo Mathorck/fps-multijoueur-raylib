@@ -8,8 +8,8 @@ public class Player
 {
     public const float JUMP_HEIGHT = 4f;
     public const float JUMP_SPEED = 0.3f;
-    public const float PLAYER_SPEED = 0.05f;
-    public const float SPRINT_SPEED = 0.09f;
+    public const float PLAYER_SPEED = 0.03f;
+    public const float SPRINT_SPEED = 0.05f;
 
     /// <summary>Liste des qui contient tous les joueurs </summary>
     public static List<Player> PlayerList = new();
@@ -35,6 +35,8 @@ public class Player
     private readonly Texture2D pseudoTexture;
     public Vector3 Rotation;
 
+    public uint NbrDeTickSansReponse = 0;
+
     public Vector3 Size;
     public float Speed;
 
@@ -49,10 +51,10 @@ public class Player
         this.Pseudo = pseudo;
 
         rotation = float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi);
-
+        /*
         int Textsize = 20;
         Image img = GenImageText(MeasureText(this.Pseudo, Textsize), Textsize, this.Pseudo);
-        pseudoTexture = LoadTextureFromImage(img);
+        pseudoTexture = LoadTextureFromImage(img);*/
     }
 
     public Player(Player player)
@@ -93,7 +95,7 @@ public class Player
     /// <param name="playerList">Liste des Joueurs</param>
     public void Draw()
     {
-        DrawBillboard(GameLoop.camera, pseudoTexture, Position, 0.5f, Color.White);
+        //ysDrawBillboard(GameLoop.camera, pseudoTexture, Position + new Vector3(0,0.3f,0), 0.1f, Color.White);
 
 
         DrawModelEx(
@@ -103,7 +105,7 @@ public class Player
             float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) *
             (180 / float.Pi), // Rotation angle (in degrees)
             new Vector3(0.12f, 0.12f, 0.12f), // Scale (matching the 0.3f from your bounding box)
-            Color.Blue // Tint color
+            Color.White // Tint color
         );
     }
 
@@ -199,6 +201,20 @@ public class Player
                 }
             }
         }
+    }
+
+    public static void VerifPacket()
+    {
+        int i = 0;
+        while (i>PlayerList.Count)
+        {
+            PlayerList[i].NbrDeTickSansReponse++;
+            if (PlayerList[i].NbrDeTickSansReponse >= 100)
+                PlayerList.Remove(PlayerList[i]); 
+            else
+                i++;
+        }
+        
     }
 
 
