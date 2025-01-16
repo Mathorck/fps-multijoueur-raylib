@@ -19,6 +19,7 @@ internal class Client
     /// <param name="port"></param>
     public static void StartClient(string host, int port)
     {
+        ConsoleWarning("Starting client ...");
         client = new TcpClient();
         client.Connect(host, port);
         ConsoleSuccess("Connecté au serveur");
@@ -99,7 +100,7 @@ internal class Client
 
                             if (Fired)
                                 Bullet.BulletsList.Add(new Bullet(new Vector3(X, Y, Z), new Vector3(Xrot, Yrot, Zrot),
-                                    Default));
+                                    Default,Player.PlayerList[id]));
                             //otherPlayers.Add(id, (X, Y, Z, Xrot, Yrot, Zrot));
                         }
                     }
@@ -143,7 +144,12 @@ internal class Client
     public static void ConsoleError(string message)
     {
         Consolelog(message, ConsoleColor.Red);
-        Gui.ErrorContent.Add(message);
+        //Gui.ErrorContent.Add(message);
+        if (!File.Exists("Errorlog.txt"))
+            File.Create("Errorlog.txt");
+        StreamWriter writer = new StreamWriter("Errorlog.txt", true);
+        writer.WriteLine(message);
+        writer.Close();
     }
 
     /// <summary>

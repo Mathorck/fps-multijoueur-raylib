@@ -255,20 +255,20 @@ public class Launcher
     }
 
 
+    private static bool GettingServers = false;
+
     /// <summary>
     ///     Récupère la liste des serveurs depuis la base de données
     /// </summary>
     /// <returns>Liste des serveurs</returns>
     private static async Task GetServers()
     {
-        servers.Clear();
-
         using (MySqlConnection conn = new(connectionString))
         {
             conn.Open();
             MySqlCommand requete = new("SELECT Id, Ip, Nom, Nombre_Joueur FROM serveur", conn);
 
-            using (MySqlDataReader? reader = requete.ExecuteReader())
+            using (MySqlDataReader reader = requete.ExecuteReader())
             {
                 int nbPassage = 0;
 

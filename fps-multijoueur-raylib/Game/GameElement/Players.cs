@@ -24,6 +24,7 @@ public class Player
     public static float Health = 100;
     public static float Bullet = 30;
     public static string Nom = "Player";
+    public static BoundingBox BB;
 
     private int animCurrentFrame;
     private int animIndex;
@@ -120,6 +121,11 @@ public class Player
 
         Gui.DebugContent.Add(
             $"Position: [{float.Round(camera.Position.X, 2)} | {float.Round(camera.Position.Y, 2)} | {float.Round(camera.Position.Z, 2)}]");
+        
+        BB = new BoundingBox(
+            camera.Position - GetModelBoundingBox(DefaultModel).Max * 0.3f * 0.5f, // Point minimum (coin bas-gauche)
+            camera.Position + GetModelBoundingBox(DefaultModel).Max * 0.3f * 0.5f  // Point maximum (coin haut-droit)
+        );
 
         Vector3 oldCamPos = camera.Position;
         Vector3 initialTarget = camera.Target - camera.Position;

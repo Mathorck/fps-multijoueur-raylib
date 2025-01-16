@@ -2,6 +2,7 @@
 using System;
 using System.Numerics;
 using System.Collections.Generic;
+using DeadOpsArcade3D.Multiplayer;
 
 
 namespace DeadOpsArcade3D.Game.GameElement;
@@ -20,23 +21,22 @@ public class Bullet
     public float Speed;
     public Vector3 Target;
     public Weapon Weapon;
+    public Player Sender;
 
-    public Bullet(Vector3 playerPos, Vector3 direction, Weapon w)
+    public Bullet(Vector3 playerPos, Vector3 direction, Weapon w, Player sender)
     {
         Position = new Vector3(playerPos.X, playerPos.Y - 0.05f, playerPos.Z);
         Target = new(direction.X, direction.Y - 0.05f, direction.Z);
         Size = new Vector3(0.1f, 0.1f, 0.1f);
         this.Direction = Vector3.Normalize(Target - Position);
-        Speed = 35.0f;
+        Speed = 1.0f;
         Weapon = w;
         BoundingBox = new BoundingBox(Position - Size / 2, Position + Size / 2);
         PlayerPosition = Position;
         Rotation = float.Atan2(Direction.X - PlayerPosition.X, Direction.Z - PlayerPosition.Z) * (180 / float.Pi);
-
+        Sender = sender;
     }
-
-
-
+    
 
     public static void Unload()
     {
@@ -55,9 +55,10 @@ public class Bullet
 
         // Vérification des collisions avec les murs
         if (CheckCollisionWithWalls())
-        {
             return true; // Supprime la balle en cas de collision
-        }
+        
+        if (CheckCollisionWithPlr())
+            return true;
 
         return false; // Sinon, la balle continue
     }
@@ -104,6 +105,31 @@ public class Bullet
 
         return false; // Pas de collision
     }
+
+
+    private unsafe bool CheckCollisionWithPlr()
+    {
+        //TODO: ICI
+        try
+        {
+            foreach (Bullet bullet in BulletsList)
+            {
+                if (Raylib.CheckCollisionBoxes(bullet.BoundingBox, Player.BB) && bullet.Sender != null)
+                {
+                    Player.Health -= bullet.Weapon.damage;
+                    return true;
+                }
+
+            }
+        }
+        catch (Exception e)
+        {
+            Client.ConsoleError($"Erreur de Neuille avec la liste des bullets {e}");
+        }
+        return false;
+    }
+
+
 
     /// <summary>
     /// Dessine toutes les balles de la liste

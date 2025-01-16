@@ -64,10 +64,11 @@ public static class Gui
         DebugContent.Clear();
 
         DrawFPS(10, 10);
-
+        /*
         string? output2 = "";
         foreach (string? text in ErrorContent) output2 += text + "\n";
         DrawText(output2, 100, 20, 20, Color.Red);
+        */
     }
 
     private static void Weapon()

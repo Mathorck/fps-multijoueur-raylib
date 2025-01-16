@@ -41,7 +41,7 @@ internal class Server
             TcpClient client = server.AcceptTcpClient();
             clients[clientCounter] = client;
             //                               | pos | rot |
-            playerPositions[clientCounter] = "0,0,0,0,2,0,Unknow,false"; // Position initiale
+            playerPositions[clientCounter] = "0,0,0,0,2,0,Unknown,false"; // Position initiale
             Client.ConsoleSuccess("Nouveau client connecté : " + clientCounter);
             Thread clientThread = new(HandleClient);
             clientThread.Start(clientCounter);

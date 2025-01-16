@@ -25,7 +25,7 @@ public class Weapon
         if (IsMouseButtonPressed(MouseButton.Left) && Player.Bullet > 0 && !reloadTimer.IsRunning &&
             !fireTimer.IsRunning)
         {
-            BulletsList.Add(new Bullet(camera.Position, camera.Target, this));
+            BulletsList.Add(new Bullet(camera.Position, camera.Target, this, null));
             Client.Fire();
             Player.Bullet--;
             fireTimer.Reset();
