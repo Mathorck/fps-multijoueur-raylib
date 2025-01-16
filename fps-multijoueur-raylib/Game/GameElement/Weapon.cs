@@ -1,27 +1,54 @@
-﻿using Raylib_cs;
+﻿using DeadOpsArcade3D.Multiplayer;
 using static Raylib_cs.Raylib;
-using DeadOpsArcade3D.Multiplayer;
 
-namespace DeadOpsArcade3D.Game.GameElement
+namespace DeadOpsArcade3D.Game.GameElement;
+
+public class Weapon
 {
-    public class Weapon
+    private readonly Timer fireTimer = new(0.15f);
+    private readonly Timer reloadTimer = new(1.5f);
+    public float damage;
+
+    public Weapon()
     {
-        public float damage;
-        public Weapon()
+        damage = 15f;
+    }
+
+    /// <summary>
+    ///     S'exécute lorsque l'arme est utilisée pour tirer une balle
+    /// </summary>
+    public void Fire(List<Bullet> BulletsList, Camera3D camera)
+    {
+        fireTimer.Update();
+        reloadTimer.Update();
+
+        if (IsMouseButtonPressed(MouseButton.Left) && Player.Bullet > 0 && !reloadTimer.IsRunning &&
+            !fireTimer.IsRunning)
         {
-            damage = 15f;
+            BulletsList.Add(new Bullet(camera.Position, camera.Target, this));
+            Client.Fire();
+            Player.Bullet--;
+            fireTimer.Reset();
+            fireTimer.Start();
         }
 
-        /// <summary>
-        /// S'exécute lorsque l'arme est utilisée pour tirer une balle
-        /// </summary>
-        public void Fire(List<Bullet> BulletsList, Camera3D camera)
+        if (IsKeyPressed(KeyboardKey.R) && !reloadTimer.IsRunning && Player.Bullet < 30)
         {
-            if (IsMouseButtonPressed(MouseButton.Left))
-            {
-                BulletsList.Add(new Bullet(camera.Position, camera.Target, this));
-                Client.Fire();
-            }
+            reloadTimer.Reset();
+            reloadTimer.Start();
+        }
+
+        if (reloadTimer.IsFinished)
+        {
+            Player.Bullet = 30;
+            reloadTimer.Stop();
+            reloadTimer.Reset();
+        }
+
+        if (fireTimer.IsFinished)
+        {
+            fireTimer.Stop();
+            fireTimer.Reset();
         }
     }
 }
