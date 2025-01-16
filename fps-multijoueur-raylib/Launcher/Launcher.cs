@@ -14,7 +14,7 @@ public class Launcher
     /// <summary>
     /// Chaîne de connexion au serveur MySQL
     /// </summary>
-    public static readonly string connectionString = $"Server=LMB-312-11;Database=raylib;Uid=root;Pwd=;";
+    public static readonly string connectionString = $"Server=LMB-101-06;Database=raylib;Uid=root;Pwd=;";
 
     private static LauncherPage currentPage = LauncherPage.Play;
 

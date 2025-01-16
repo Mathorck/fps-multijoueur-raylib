@@ -37,7 +37,7 @@ public static class Gui
         Color color = new Color(0,0,0,50);
         int crossWidth = 20;
         int crossHeight = 20;
-        int crossWeight = 5; 
+        int crossWeight = 3; 
 
         int width = GetScreenWidth();
         int height = GetScreenHeight();
