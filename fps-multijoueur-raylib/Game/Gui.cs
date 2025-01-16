@@ -103,6 +103,11 @@ public static class Gui
 
         DrawRectangle(screenWidth - 220, screenHeight - 60, 200, 40, Color.Gray);
         DrawText("Balles: " + Player.Bullet, screenWidth - 215, screenHeight - 55, 20, Color.White);
+
+        if (Player.Bullet == 0)
+        {
+            DrawText("Recharger [R]", screenWidth - 230, screenHeight - 100, 32, Color.Red);
+        }
     }
 
     private static void ShowTab()

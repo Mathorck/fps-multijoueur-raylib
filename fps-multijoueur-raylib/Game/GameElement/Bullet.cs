@@ -27,7 +27,7 @@ public class Bullet
         Target = new(direction.X, direction.Y - 0.05f, direction.Z);
         Size = new Vector3(0.1f, 0.1f, 0.1f);
         this.Direction = Vector3.Normalize(Target - Position);
-        Speed = 1.0f;
+        Speed = 35.0f;
         Weapon = w;
         BoundingBox = new BoundingBox(Position - Size / 2, Position + Size / 2);
         PlayerPosition = Position;

@@ -55,7 +55,7 @@ internal class Client
                     try
                     {
                         allPositions[i] = allPositions[i].Replace("[", "").Replace("]", "");
-                        string[] parts = allPositions[i].Split(':');
+                        string[] parts = allPositions[i].Split(',');
                         if (parts.Length == 8)
                         {
                             if (!int.TryParse(parts[0], out int id))
@@ -114,9 +114,9 @@ internal class Client
     /// <param name="camera">toutes les info du joueur</param>
     public static void SendInfo(Camera3D camera)
     {
-        string position = float.Round(camera.Position.X,4) + ":" + float.Round(camera.Position.Y,4) + ":" + float.Round(camera.Position.Z,4) + ":" + 
-                          float.Round(camera.Target.X,4) + ":" + float.Round(camera.Target.Y,4) + ":" + float.Round(camera.Target.Z,4) + ":" + 
-                          Player.Nom + ":" + sendFire;
+        string position = float.Round(camera.Position.X,4) + "," + float.Round(camera.Position.Y,4) + "," + float.Round(camera.Position.Z,4) + "," + 
+                          float.Round(camera.Target.X,4) + "," + float.Round(camera.Target.Y,4) + "," + float.Round(camera.Target.Z,4) + "," + 
+                          Player.Nom + "," + sendFire;
         sendFire = false;
         byte[] data = Encoding.UTF8.GetBytes(position);
         stream.Write(data, 0, data.Length);

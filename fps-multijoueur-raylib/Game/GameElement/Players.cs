@@ -8,8 +8,8 @@ public class Player
 {
     public const float JUMP_HEIGHT = 4f;
     public const float JUMP_SPEED = 0.3f;
-    public const float PLAYER_SPEED = 0.05f;
-    public const float SPRINT_SPEED = 0.09f;
+    public const float PLAYER_SPEED = 0.03f;
+    public const float SPRINT_SPEED = 0.05f;
 
     /// <summary>Liste des qui contient tous les joueurs </summary>
     public static List<Player> PlayerList = new();
