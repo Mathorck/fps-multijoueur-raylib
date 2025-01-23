@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 using DeadOpsArcade3D.Multiplayer;
 using static Raylib_cs.Raylib;
+using DeadOpsArcade3D.Game.GameElement;
 
 namespace DeadOpsArcade3D.Game.GameElement;
 
@@ -8,6 +9,7 @@ public class Player
 {
     public const float JUMP_HEIGHT = 4f;
     public const float JUMP_SPEED = 0.3f;
+
     public const float PLAYER_SPEED = 0.03f;
     public const float SPRINT_SPEED = 0.05f;
 
@@ -15,6 +17,7 @@ public class Player
     public static List<Player> PlayerList = new();
 
     public static Model DefaultModel;
+    private static unsafe ModelAnimation* characterAnimations;
 
     private static bool canJump = true;
     private static bool canFall = true;
@@ -26,8 +29,8 @@ public class Player
     public static string Nom = "Player";
     public static BoundingBox BB;
 
-    private int animCurrentFrame;
-    private int animIndex;
+    public int animCurrentFrame;
+    public int animIndex;
     public BoundingBox HitBox;
     private float life;
 
@@ -36,12 +39,12 @@ public class Player
     private readonly Texture2D pseudoTexture;
     public Vector3 Rotation;
 
-    public uint NbrDeTickSansReponse = 0;
-
     public Vector3 Size;
     public float Speed;
 
-    public Player(float x, float y, float z, float xRot, float yRot, float zRot, string pseudo)
+    public uint NbrDeTickSansReponse = 0;
+
+    public Player(float x, float y, float z, float xRot, float yRot, float zRot, string pseudo, int animIndex, int CurrentAnimFrame)
     {
         Position = new Vector3(x, y, z);
         Size = GetModelBoundingBox(DefaultModel).Max * 0.3f;
@@ -50,8 +53,11 @@ public class Player
         HitBox = new BoundingBox(Position, Size);
         Rotation = new Vector3(xRot, yRot, zRot);
         this.Pseudo = pseudo;
+        this.animIndex = animIndex;
+        this.animCurrentFrame = CurrentAnimFrame;
 
         rotation = float.Atan2(Rotation.X - Position.X, Rotation.Z - Position.Z) * (180 / float.Pi);
+
         /*
         int Textsize = 20;
         Image img = GenImageText(MeasureText(this.Pseudo, Textsize), Textsize, this.Pseudo);
@@ -67,6 +73,7 @@ public class Player
         HitBox = player.HitBox;
         Rotation = player.Rotation;
         Pseudo = player.Pseudo;
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -108,6 +115,18 @@ public class Player
             new Vector3(0.12f, 0.12f, 0.12f), // Scale (matching the 0.3f from your bounding box)
             Color.White // Tint color
         );
+
+
+        // Update model animation
+        unsafe
+        {
+            ModelAnimation anim = characterAnimations[animIndex];
+            animCurrentFrame = (animCurrentFrame + 1) % anim.FrameCount;
+            UpdateModelAnimation(DefaultModel, anim, animCurrentFrame);
+
+            UpdateModelAnimation(DefaultModel, anim, animCurrentFrame);
+
+        }
     }
 
     /// <summary>
@@ -145,8 +164,8 @@ public class Player
         UpdateCameraPro(ref camera,
             deplacement,
             new Vector3(
-                GetMouseDelta().X * GameLoop.sensibilité,
-                GetMouseDelta().Y * GameLoop.sensibilité,
+                GetMouseDelta().X * GameLoop.sensibilite,
+                GetMouseDelta().Y * GameLoop.sensibilite,
                 0.0f),
             0f
         );
@@ -164,47 +183,82 @@ public class Player
         else if (playerCellY >= Map.Cubicmap.Height) playerCellY = Map.Cubicmap.Height - 1;
 
         for (int y = 0; y < Map.Cubicmap.Height; y++)
-        for (int x = 0; x < Map.Cubicmap.Width; x++)
         {
-            Color* mapPixelsData = Map.MapPixels;
-
-            // Collision: Color.white pixel, only check R channel
-            Rectangle rec = new(
-                Map.MapPosition.X - 0.5f + x * 1.0f,
-                Map.MapPosition.Z - 0.5f + y * 1.0f,
-                1.0f,
-                1.0f
-            );
-
-            bool colisionX = false, colisionZ = false;
-
-            const float bSize = 0.2f, sSize = 0.1f;
-
-            Rectangle recx = new(camera.Position.X - bSize / 2, camera.Position.Z - sSize / 2,
-                new Vector2(bSize, sSize));
-            Rectangle recz = new(camera.Position.X - sSize / 2, camera.Position.Z - bSize / 2,
-                new Vector2(sSize, bSize));
-
-            DrawRectangleRec(recx, Color.Blue);
-            DrawRectangleRec(recz, Color.Black);
-
-            colisionX = CheckCollisionRecs(recx, rec);
-            colisionZ = CheckCollisionRecs(recz, rec);
-
-
-            if (mapPixelsData[y * Map.Cubicmap.Width + x].R == 255)
+            for (int x = 0; x < Map.Cubicmap.Width; x++)
             {
-                if (colisionX)
-                {
-                    camera.Position.X = oldCamPos.X;
-                    camera.Target = camera.Position + initialTarget;
-                }
+                Color* mapPixelsData = Map.MapPixels;
 
-                if (colisionZ)
+                // Collision: Color.white pixel, only check R channel
+                Rectangle rec = new(
+                    Map.MapPosition.X - 0.5f + x * 1.0f,
+                    Map.MapPosition.Z - 0.5f + y * 1.0f,
+                    1.0f,
+                    1.0f
+                );
+
+                bool colisionX = false, colisionZ = false;
+
+                const float bSize = 0.3f, sSize = 0.1f;
+
+                Rectangle recx = new(camera.Position.X - bSize / 2, camera.Position.Z - sSize / 2, new(bSize, sSize));
+                Rectangle recz = new(camera.Position.X - sSize / 2, camera.Position.Z - bSize / 2, new(sSize, bSize));
+
+                colisionX = CheckCollisionRecs(recx, rec);
+                colisionZ = CheckCollisionRecs(recz, rec);
+
+                if (mapPixelsData[y * Map.Cubicmap.Width + x].R == 255)
                 {
-                    camera.Position.Z = oldCamPos.Z;
-                    camera.Target = camera.Position + initialTarget;
+                    if (colisionX)
+                    {
+                        camera.Position.X = oldCamPos.X;
+                        camera.Target.X = camera.Position.X + initialTarget.X;
+                    }
+
+                    if (colisionZ)
+                    {
+                        camera.Position.Z = oldCamPos.Z;
+                        camera.Target.Z = camera.Position.Z + initialTarget.Z;
+                    }
                 }
+            }
+        }
+    }
+
+
+    public void CheckColisions(Player player, Camera3D camera)
+    {
+        const float bSize = 0.3f, sSize = 0.1f;
+
+        Vector3 oldCamPos = camera.Position;
+        Vector3 initialTarget = camera.Target - camera.Position;
+
+        BoundingBox bbX = new(new(camera.Position.X - bSize / 2, camera.Position.Z - sSize / 2, camera.Position.Y), new(bSize, sSize, sSize));
+        BoundingBox bbZ = new(new(camera.Position.X - sSize / 2, camera.Position.Z - bSize / 2, camera.Position.Y), new(sSize, sSize, bSize));
+
+        DrawBoundingBox(bbX, Color.Red);
+        DrawBoundingBox(bbZ, Color.Blue);
+        DrawBoundingBox(player.HitBox, Color.White);
+
+        bool colisionX = CheckCollisionBoxes(bbX, player.HitBox);
+        bool colisionZ = CheckCollisionBoxes(bbZ, player.HitBox);
+
+        if (colisionX)
+        {
+            camera.Position.X = oldCamPos.X;
+            camera.Target.X = camera.Position.X + initialTarget.X;
+        }
+        if (colisionZ)
+        {
+            camera.Position.Z = oldCamPos.Z;
+            camera.Target.Z = camera.Position.Z + initialTarget.Z;
+        }
+
+
+        for (int i = 0; i < GameElement.Bullet.BulletsList.Count(); i++)
+        {
+            if (player != this && CheckCollisionBoxes(HitBox, player.HitBox))
+            {
+
             }
         }
     }
@@ -212,19 +266,19 @@ public class Player
     public static void VerifPacket()
     {
         int i = 0;
-        while (i>PlayerList.Count)
+        while (i > PlayerList.Count)
         {
             PlayerList[i].NbrDeTickSansReponse++;
             if (PlayerList[i].NbrDeTickSansReponse >= 100)
-                PlayerList.Remove(PlayerList[i]); 
+                PlayerList.Remove(PlayerList[i]);
             else
                 i++;
         }
-        
+
     }
 
-
-    public void Animation()
+    private static Timer shootTimer = new(1000);
+    public static void Animation(ref int animIndex, ref int animCurrentFrame)
     {
         //Default Character
         string fileName = "ressources/model3d/character/robot.glb";
@@ -236,17 +290,14 @@ public class Player
         {
             fixed (sbyte* pFileName = fileNameBytes)
             {
-                ModelAnimation* characterAnimations = LoadModelAnimations(pFileName, &animCount);
+                //TODO: Pourquoi pas faire un Init ?
+                if(characterAnimations == null)
+                    characterAnimations = LoadModelAnimations(pFileName, &animCount);
 
-                Console.WriteLine("Nombre d'animations chargées : " + animCount);
-
+                ModelAnimation anim = characterAnimations[animIndex];
+                Client.ConsoleInfo("Nombre d'animations chargées : " + animCount);
                 // Select current animation
-
-                // Faire défiler l'animation avec les cliques de la souris
-                /*if (IsMouseButtonPressed(MouseButton.Right)) animIndex = (animIndex + 1) % animCount;
-                else if (IsMouseButtonPressed(MouseButton.Left)) animIndex = (animIndex + animCount - 1) % animCount;*/
-
-                /*
+                    /*
                     0 Emote
                     1 Mort
                     2 Idle
@@ -261,30 +312,30 @@ public class Player
                     11 Sauter comme mario
                     12 Salut
                     13 Oui
-                */
-                //Control Animations                
-                if (IsKeyDown(KeyboardKey.W)) animIndex = 10;
-                if (IsKeyPressed(KeyboardKey.Space)) animIndex = 3;
-                //Mettre un timer puis mettre l'animation idle
-                if (IsMouseButtonPressed(MouseButton.Left)) animIndex = 5;
-                if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.One))
+                    */
+                //Control Animations   
+                shootTimer.Update();
+                
+                if (shootTimer.IsRunning) animIndex = 5;
+                else if (IsKeyDown(KeyboardKey.W) || IsKeyDown(KeyboardKey.A)|| IsKeyDown(KeyboardKey.S) || IsKeyDown(KeyboardKey.D)) animIndex = 10;
+                else if (IsKeyPressed(KeyboardKey.Space)) animIndex = 3;
+                else if (IsMouseButtonPressed(MouseButton.Left) && !shootTimer.IsRunning)
                 {
-                    animIndex = 0;
-                    DrawText("Vous faites une emote!", GetScreenWidth() / 2, GetScreenHeight() / 3, 10,
-                        Color.DarkPurple);
+                    shootTimer.Reset();
+                    shootTimer.Start();
+                    animIndex = 5;
                 }
+                else if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.One)) animIndex = 0;
+                else if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyDown(KeyboardKey.Two)) animIndex = 9;
+                else if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyDown(KeyboardKey.Three)) animIndex = 11;
+                else if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyDown(KeyboardKey.Four)) animIndex = 12;
+                else if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyDown(KeyboardKey.Five)) animIndex = 4;
+                else if (IsKeyDown(KeyboardKey.LeftControl) && IsKeyDown(KeyboardKey.Six)) animIndex = 13;
+                else if (animCurrentFrame != anim.FrameCount) animIndex = 2;
 
-                if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Two)) animIndex = 9;
-                if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Three)) animIndex = 11;
-                if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Four)) animIndex = 12;
-                if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Five)) animIndex = 4;
-                if (IsKeyPressed(KeyboardKey.LeftControl) && IsKeyPressed(KeyboardKey.Six)) animIndex = 13;
-
-                // Update model animation
-                ModelAnimation anim = characterAnimations[animIndex];
                 animCurrentFrame = (animCurrentFrame + 1) % anim.FrameCount;
-                UpdateModelAnimation(DefaultModel, anim, animCurrentFrame);
             }
         }
     }
+
 }

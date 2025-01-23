@@ -17,7 +17,7 @@ internal class Server
     ///     Cela démarre le serveur
     /// </summary>
     /// <param name="port">le ports</param>
-    public static void StartServer(int port)
+    public static void StartServer(int port, bool principal)
     {
         server = new TcpListener(IPAddress.Any, port);
         server.Start();
@@ -28,8 +28,16 @@ internal class Server
         ping.Start();
 
 
-        Thread acceptThread = new(AcceptClients);
-        acceptThread.Start();
+        if (principal)
+        {
+            AcceptClients();
+        }
+        else
+        {
+            Thread acceptThread = new(AcceptClients);
+            acceptThread.Start();
+        }
+        
     }
 
     private static void AcceptClients()
@@ -40,8 +48,8 @@ internal class Server
 
             TcpClient client = server.AcceptTcpClient();
             clients[clientCounter] = client;
-            //                               | pos | rot |
-            playerPositions[clientCounter] = "0,0,0,0,2,0,Unknown,false"; // Position initiale
+            //                                 | pos | rot |Pseudo|tire?|emote
+            //playerPositions[clientCounter] = "0,0,0,0,2,0,Unknow,false,0,0"; // Position initiale
             Client.ConsoleSuccess("Nouveau client connecté : " + clientCounter);
             Thread clientThread = new(HandleClient);
             clientThread.Start(clientCounter);

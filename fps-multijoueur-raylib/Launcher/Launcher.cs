@@ -18,7 +18,7 @@ public class Launcher
     /// <summary>
     ///     Chaîne de connexion au serveur MySQL
     /// </summary>
-    public static string connectionString = $"Server=LMB-101-06;Database=raylib;Uid=root;Pwd=;";
+    public static string connectionString = $"Server=AA;Database=raylib;Uid=root;Pwd=;";
 
     private static LauncherPage currentPage = LauncherPage.Play;
 
@@ -125,6 +125,9 @@ public class Launcher
 
         return (int)BTN_PLAY_HEIGHT;
     }
+    
+    private static InputButton directJoin = new(new (300,GetScreenHeight()-100,600,75), "Direct Connect", 20, Color.LightGray,
+        Color.Black, Color.Black, Color.LightGray, Color.Black, Color.Red, false);
 
     /// <summary>
     ///     Affiche la page "Jouer"
@@ -153,15 +156,41 @@ public class Launcher
                 }
             }
         }
+        directJoin.Draw();
+        if (directJoin.CheckCollision(GetMousePosition()))
+        {
+            int key = GetCharPressed();
+            SetMouseCursor(MouseCursor.IBeam);
+            
+            directJoin.DrawBorder(1);
+            
+            if (key > 0)
+                directJoin.AddChar((char)key);
+            
+            if (IsKeyPressed(KeyboardKey.Backspace))
+                directJoin.RemoveChar();
 
+            if (IsKeyPressed(KeyboardKey.Enter))
+            {
+                close = true;
+                joinServer = true;
+                joinIp = directJoin.inputText;
+            }
+                
+        }
         SetMouseCursor(mouseCursor);
         EndDrawing();
     }
+    
+    private static Rectangle serverOnlyRec = new Rectangle(50, GetScreenHeight()-100, 50,50);
+    private static bool serverOnly = false;
 
     /// <summary>
     ///     Affiche la page "Heberger"
     /// </summary>
     /// <param name="ip">Entrée de l'adresse IP du serveur</param>
+    /// <param name="close"></param>
+    /// <param name="joinServer"></param>
     private static void Heberger(ref string ip, ref bool close, ref bool joinServer)
     {
         Rectangle textBox = new(GetScreenWidth() * 0.5f - 500, GetScreenHeight() * 0.5f - 25, 1000, 50);
@@ -214,15 +243,26 @@ public class Launcher
                 GetScreenWidth() / 2 - MeasureText("Appuyez sur RETOUR pour supprimer des caractères...", 20) / 2,
                 GetScreenHeight() / 2 - 300, 20, Color.Gray);
         }
+        
+        // srvOnly
+        if (serverOnly)
+            DrawRectangleRec(serverOnlyRec, Color.Blue);
+        DrawRectangleLines((int)serverOnlyRec.X, (int)serverOnlyRec.Y, (int)serverOnlyRec.Width, (int)serverOnlyRec.Height, Color.Black);
+        DrawText("Server Only",(int)(serverOnlyRec.X+ serverOnlyRec.Width + 10), (int)(serverOnlyRec.Y), 40, Color.Red);
 
         EndDrawing();
+        
+        if (CheckCollisionPointRec(GetMousePosition(),serverOnlyRec) && IsMouseButtonPressed(MouseButton.Left))
+            serverOnly = !serverOnly;
 
         if (IsKeyPressed(KeyboardKey.Enter))
         {
             close = true;
             SaveServer(ip);
-            Server.StartServer(Program.DEFAULT_PORT);
-            joinServer = true;
+            joinServer = !serverOnly;
+            if (serverOnly)
+                CloseWindow();
+            Server.StartServer(Program.DEFAULT_PORT,serverOnly);
         }
     }
 
@@ -261,14 +301,14 @@ public class Launcher
     ///     Récupère la liste des serveurs depuis la base de données
     /// </summary>
     /// <returns>Liste des serveurs</returns>
-    private static async Task GetServers()
+    private static Task GetServers()
     {
         using (MySqlConnection conn = new(connectionString))
         {
             conn.Open();
             MySqlCommand requete = new("SELECT Id, Ip, Nom, Nombre_Joueur FROM serveur", conn);
 
-            using (MySqlDataReader reader = requete.ExecuteReader())
+            using (MySqlDataReader? reader = requete.ExecuteReader())
             {
                 int nbPassage = 0;
 
@@ -284,6 +324,7 @@ public class Launcher
         }
 
         CleanupServers();
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -350,19 +391,19 @@ public class Launcher
     private static Rectangle CreateButton(string text, float xPosition = -1)
     {
         return new Rectangle(
-            xPosition == -1 ? GetScreenWidth() / 2 - CalculateButtonWidth(text) / 2 : xPosition,
+            xPosition == -1 ? GetScreenWidth() * 0.5f - CalculateButtonWidth(text) * 0.5f : xPosition,
             0,
             CalculateButtonWidth(text),
             BTN_PLAY_HEIGHT
         );
     }
 
-    private static void LoadConnexionString()
+    public static void LoadConnexionString()
     {
-        using (StreamReader sr = new("ressources/connexion.txt"))
-        {
-            connectionString = $"Server={sr.ReadLine()};Database=raylib;Uid=root;Pwd=;";
-        }
+        StreamReader sr = new("ressources/connexion.txt");
+        connectionString = $"Server={sr.ReadLine()};Database=raylib;Uid=root;Pwd=;";
+        sr.Close();
+        Client.ConsoleSuccess("Connexion string loaded");
     }
 
     #region Constantes

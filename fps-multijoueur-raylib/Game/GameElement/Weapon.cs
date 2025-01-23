@@ -32,7 +32,7 @@ public class Weapon
             fireTimer.Start();
         }
 
-        if (IsKeyPressed(KeyboardKey.R) && !reloadTimer.IsRunning && Player.Bullet < 30)
+        if ((IsKeyPressed(KeyboardKey.R) || (IsMouseButtonPressed(MouseButton.Left) && Player.Bullet <= 0)) && !reloadTimer.IsRunning && Player.Bullet < 30)
         {
             reloadTimer.Reset();
             reloadTimer.Start();

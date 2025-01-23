@@ -11,6 +11,7 @@ public class Bullet
 {
     public static List<Bullet> BulletsList = new();
     private static Model bulletModel;
+    public static Sound bulletSound;
     public BoundingBox BoundingBox;
     public Vector3 Direction;
     public Vector3 PlayerPosition;
@@ -22,6 +23,8 @@ public class Bullet
     public Vector3 Target;
     public Weapon Weapon;
     public Player Sender;
+    
+    private static Random random = new();
 
     public Bullet(Vector3 playerPos, Vector3 direction, Weapon w, Player sender)
     {
@@ -29,14 +32,23 @@ public class Bullet
         Target = new(direction.X, direction.Y - 0.05f, direction.Z);
         Size = new Vector3(0.1f, 0.1f, 0.1f);
         this.Direction = Vector3.Normalize(Target - Position);
-        Speed = 1.0f;
+        Speed = 25.0f;
         Weapon = w;
         BoundingBox = new BoundingBox(Position - Size / 2, Position + Size / 2);
         PlayerPosition = Position;
         Rotation = float.Atan2(Direction.X - PlayerPosition.X, Direction.Z - PlayerPosition.Z) * (180 / float.Pi);
         Sender = sender;
+        
+        
+        
+        float distance = Vector3.Distance(GameLoop.camera.Position, PlayerPosition);
+        float volume = Math.Clamp(1.0f / (distance + 1.0f), 0.1f, 1.0f);
+        float randomPitch = 0.8f + (float)random.NextDouble() * 0.4f;
+        Raylib.SetSoundPitch(bulletSound, randomPitch);
+        Raylib.SetSoundVolume(bulletSound, volume);
+        Raylib.PlaySound(bulletSound);
     }
-    
+
 
     public static void Unload()
     {
@@ -50,13 +62,14 @@ public class Bullet
     public bool Update()
     {
         Position += Direction * Speed * Raylib.GetFrameTime();
-        BoundingBox.Min = Position;
+        BoundingBox.Min = Position + new Vector3(-0.01f,-0.01f,-0.01f);
+        BoundingBox.Max = Position - new Vector3(0.1f,0.1f,0.1f);
         //BoundingBox = new BoundingBox(Position - Size / 2, Position + Size / 2);
 
         // Vérification des collisions avec les murs
         if (CheckCollisionWithWalls())
             return true; // Supprime la balle en cas de collision
-        
+
         if (CheckCollisionWithPlr())
             return true;
 
@@ -109,7 +122,6 @@ public class Bullet
 
     private unsafe bool CheckCollisionWithPlr()
     {
-        //TODO: ICI
         try
         {
             foreach (Bullet bullet in BulletsList)
@@ -120,6 +132,19 @@ public class Bullet
                     return true;
                 }
 
+            }
+
+            if(Player.Health <= 0)
+            {
+                Player.Health = 100;
+                GameLoop.camera = new()
+                {
+                    Position = GameLoop.ListSpawn[GameLoop.random.Next(0, 7)],
+                    Target = new Vector3(0.0f, 1.0f, 0.0f),
+                    Up = new Vector3(0.0f, 1.0f, 0.0f),
+                    FovY = 60.0f,
+                    Projection = CameraProjection.Perspective
+                };
             }
         }
         catch (Exception e)
@@ -139,6 +164,7 @@ public class Bullet
     {
         for (int i = 0; i < bullets.Count; i++)
         {
+            //Raylib.DrawBoundingBox(bullets[i].BoundingBox, Color.Blue);
             Raylib.DrawModelEx(
                 bulletModel,                    // Le modèle de la balle
                 bullets[i].Position,            // Position de la balle
@@ -161,6 +187,7 @@ public class Bullet
     /// </summary>
     public static void Init()
     {
+        bulletSound = Raylib.LoadSound("./ressources/sound/bullet.wav");
         bulletModel = Raylib.LoadModel("./ressources/model3d/ammo/bullet.glb");
     }
 }

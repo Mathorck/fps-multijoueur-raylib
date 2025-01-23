@@ -1,6 +1,7 @@
 using System.Numerics;
 using DeadOpsArcade3D.Game.GameElement;
 using static Raylib_cs.Raylib;
+using DeadOpsArcade3D.Launcher.LauncherElement;
 
 namespace DeadOpsArcade3D.Game;
 
@@ -10,14 +11,19 @@ public static class Gui
     public static List<string> ErrorContent = new();
     public static bool IsTabOppened = false;
 
+    public static bool IsParamOppended = false;
+
+    private static bool ChoseSensi = false;
+
     private static readonly Rectangle healthBar = new(20, GetScreenHeight() - 80, 180, 60);
     private static Texture2D wepon;
 
-    public static void Init()
-    {
-        wepon = LoadTexture("./ressources/textures/ShootGun.png");
-    }
+    // Variable globale pour contrôler le mouvement de l'arme
+    private static float weaponMovement = 0.0f; // Position de l'arme
+    private static float weaponTime = 0.0f; // Temps utilisé pour l'oscillation
+    private static float weaponAmplitude = 100.0f; // Amplitude du mouvement
 
+    #region Sys
     /// <summary>
     ///     Affiche le GUI
     /// </summary>
@@ -29,14 +35,22 @@ public static class Gui
         VieAndBullet();
         if (IsTabOppened)
             ShowTab();
+        if (IsParamOppended)
+            Parametres();
         Debug();
     }
     
+    public static void Init()
+    {
+        wepon = LoadTexture("./ressources/textures/ShootGun.png");
+    }
     public static void Unload()
     {
         UnloadTexture(wepon);
     }
+    #endregion
 
+    #region crossair
     /// <summary>
     ///     Affiche le crossair
     /// </summary>
@@ -55,7 +69,9 @@ public static class Gui
 
         DrawRectangle(width / 2 - crossWeight / 2, height / 2 - crossHeight / 2, crossWeight, crossHeight, Color.Black);
     }
-
+    #endregion
+    
+    #region debug
     private static void Debug()
     {
         string? output = "";
@@ -64,6 +80,7 @@ public static class Gui
         DebugContent.Clear();
 
         DrawFPS(10, 10);
+
         /*
         string? output2 = "";
         foreach (string? text in ErrorContent) output2 += text + "\n";
@@ -71,9 +88,22 @@ public static class Gui
         */
     }
 
+    #endregion
+
     private static void Weapon()
     {
-        DrawTexture(wepon, (GetScreenWidth() - wepon.Width) / 2 + 100, GetScreenHeight() - wepon.Height, Color.White);
+        if (IsKeyDown(KeyboardKey.W) || IsKeyDown(KeyboardKey.S) || IsKeyDown(KeyboardKey.A) ||
+            IsKeyDown(KeyboardKey.D))
+        {
+            float wpnSpeed = IsKeyDown(KeyboardKey.LeftShift) ? 4.0f : 2.0f;
+            weaponTime += wpnSpeed * GetFrameTime();
+            weaponMovement = (float)(Math.Sin(weaponTime) * weaponAmplitude);
+        }
+        
+        DrawTexture(wepon, 
+            (int)((GetScreenWidth() - wepon.Width) * 0.5f + 100) + (int)weaponMovement, 
+            GetScreenHeight() - wepon.Height - (int)Math.Abs(weaponMovement * 0.5f) +100, 
+            Color.White);
     }
 
     private static void MiniMap()
@@ -111,53 +141,135 @@ public static class Gui
         }
     }
 
+    #region Tab
+
     private static void ShowTab()
     {
-        float SHeight = GetScreenHeight();
-        float SWidth = GetScreenWidth();
+        float sHeight = GetScreenHeight();
+        float sWidth = GetScreenWidth();
 
         int tabWidth = 400;
-        int tabPaddingR = (int)(SWidth - tabWidth*2);
-
+        int tabPaddingR = (int)(sWidth - tabWidth * 2);
+        
         DrawRectangle(
             (int)(tabWidth),
             50,
             tabPaddingR,
-            (int)(SHeight - 100),
+            (int)(sHeight - 100),
             new Color(0, 0, 0, 100)
         );
-
-        int hgt = 55; 
+        
+        int hgt = 60;
         
         DrawPlayerElement(Player.Nom, ref hgt, tabWidth, tabPaddingR);
-        hgt += 10;
-
-        for (int i = 0; i < Player.PlayerList.Count; i++)
+        hgt += 20;
+        
+        foreach (Player plr in Player.PlayerList)
         {
-            Player plr = Player.PlayerList[i];
-            
-            DrawPlayerElement(plr.Pseudo,ref hgt, tabWidth, tabPaddingR);
-            
+            DrawPlayerElement(plr.Pseudo, ref hgt, tabWidth, tabPaddingR);
+            hgt += 20;
         }
     }
 
-    private static void DrawPlayerElement(string pseudo,ref int hgt,int tabWidth, int tabPaddingR)
+    private static void DrawPlayerElement(string pseudo, ref int hgt, int tabWidth, int tabPaddingR)
     {
+        int elementHeight = 30; 
         DrawRectangle(
-            tabWidth+5,
+            tabWidth + 5,
             hgt,
-            tabPaddingR-10,
-            hgt+5,
+            tabPaddingR - 10,
+            elementHeight,
             new Color(0, 0, 0, 100)
         );
-            
+
         DrawText(
             pseudo,
-            tabWidth+10,
-            hgt+10,
+            tabWidth + 10,
+            hgt + 5,
             20,
             Color.White
         );
-        hgt += 10;
+        
+        hgt += elementHeight;
     }
+
+    #endregion
+
+    #region Params
+    
+    public static void Parametres()
+    {
+        const float SPACEBETWWENBUTTONS = 50f;
+
+        Vector2 BackRecSize = new(GetScreenWidth() * 0.5f, 3 * 100f);
+        Vector2 BackRecPosition = new(GetScreenWidth() * 0.5f - BackRecSize.X * 0.5f, GetScreenHeight() * 0.5f - BackRecSize.Y * 0.5f);
+        Rectangle backRec = new(BackRecPosition, BackRecSize);
+
+        Vector2 SensibiliteSize = new(backRec.X - 10, 10f);
+        Vector2 SensibilitePosition = new(BackRecPosition.X + SensibiliteSize.X * 0.5f, backRec.Y + backRec.Height / 2 - SPACEBETWWENBUTTONS / 2);
+        Rectangle sensibiliteRec = new(SensibilitePosition, SensibiliteSize);
+
+        Vector2 SensibiliteActuelSize = new((sensibiliteRec.Width) * (GameLoop.sensibilite * 10), SensibiliteSize.Y);
+        Vector2 SensibiliteActuelPosition = new(SensibilitePosition.X, SensibilitePosition.Y);
+        Rectangle sensibiliteActuelRec = new(SensibiliteActuelPosition, SensibiliteActuelSize);
+
+        Vector2 btnQuitterSize = new(backRec.Width - 3 * SPACEBETWWENBUTTONS, 50f);
+        Vector2 btnQuitterPosition = new(backRec.X + backRec.Width/2 - btnQuitterSize.X/2, backRec.Y + backRec.Height/2 + SPACEBETWWENBUTTONS / 2);
+        Rectangle btnQuitter = new(btnQuitterPosition, btnQuitterSize);
+
+        Boutton bouton = new(btnQuitter, "Quitter", Color.Red, Color.White, new(209, 14, 0, 255), Color.White);
+
+        int fontSize = 25;
+        float decalage = 10;
+
+        Console.WriteLine(GameLoop.sensibilite * 10);
+
+        //DrawRectangleRec(backRec, new(0, 0, 0, 100));
+
+        if (IsMouseButtonReleased(MouseButton.Left))
+            ChoseSensi = false;
+
+        if (CheckCollisionPointRec(GetMousePosition(), sensibiliteRec))
+        {
+            SetMouseCursor(MouseCursor.PointingHand);
+            if (IsMouseButtonDown(MouseButton.Left))
+                ChoseSensi = true;
+        }
+        else
+            SetMouseCursor(MouseCursor.Default);
+
+        if (ChoseSensi)
+        {
+            GameLoop.sensibilite = ((GetMousePosition().X - sensibiliteRec.X) / sensibiliteRec.Width) / 10;
+            //GameLoop.sensibilité = sensibiliteRec.Width / GameLoop.MAX_SENSI * (GetMousePosition().X - SensibiliteActuelPosition.X) / 10;
+        }
+
+        if (GameLoop.sensibilite * 10 < GameLoop.MIN_SENSI - 0.01f)
+            GameLoop.sensibilite = GameLoop.MIN_SENSI / 10;
+        else if (GameLoop.sensibilite * 100 > GameLoop.MAX_SENSI)
+            GameLoop.sensibilite = GameLoop.MAX_SENSI / 100;
+
+
+        if (bouton.CheckCollision(GetMousePosition()))
+        {
+            SetMouseCursor(MouseCursor.PointingHand);
+            if(IsMouseButtonDown(MouseButton.Left))
+                GameLoop.ferme = true;
+
+        }
+        bouton.Draw();
+        bouton.DrawContour(Color.Black, 1);
+
+
+
+        DrawRectangleRounded(backRec, 0.075f, 1, new(0, 0, 0, 100));
+
+        DrawRectangleRounded(sensibiliteRec, 1f, 100, Color.Gray);
+        DrawRectangleRounded(sensibiliteActuelRec, 1f, 100, Color.Black);
+
+        DrawText($"Sensibilité", (int)(sensibiliteRec.X - MeasureText("Sensibilité", fontSize) - decalage), (int)(sensibiliteRec.Y + sensibiliteRec.Height*0.5f - fontSize*0.5f), fontSize, Color.White);
+        DrawText($"{Math.Round(GameLoop.sensibilite * 100, 2)}", (int)(sensibiliteRec.X + sensibiliteRec.Width + MeasureText($"{Math.Round(GameLoop.sensibilite * 100, 2)}", fontSize) + decalage), (int)(sensibiliteRec.Y + sensibiliteRec.Height*0.5f - fontSize*0.5f), fontSize, Color.White);
+    }
+    
+    #endregion
 }

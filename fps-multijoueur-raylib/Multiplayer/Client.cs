@@ -3,6 +3,7 @@ using System.Numerics;
 using System.Text;
 using DeadOpsArcade3D.Game;
 using DeadOpsArcade3D.Game.GameElement;
+using DeadOpsArcade3D.Launcher;
 
 namespace DeadOpsArcade3D.Multiplayer;
 
@@ -20,8 +21,17 @@ internal class Client
     public static void StartClient(string host, int port)
     {
         ConsoleWarning("Starting client ...");
-        client = new TcpClient();
-        client.Connect(host, port);
+        try
+        {
+            client = new TcpClient();
+            client.Connect(host, port);
+        }
+        catch (Exception e)
+        {
+            ConsoleError($"Failed to connect to {host} \n{e}");
+            Launcher.Launcher.Init();
+            return;
+        }
         ConsoleSuccess("Connecté au serveur");
         stream = client.GetStream();
 
@@ -58,8 +68,9 @@ internal class Client
                         allPositions[i] = allPositions[i].Replace("[", "").Replace("]", "");
                         string[] parts = allPositions[i].Split(',');
 
-                        if (parts.Length == 9)
+                        if (parts.Length == 11)
                         {
+                            #region Parsing multiplayer
                             if (!int.TryParse(parts[0], out int id))
                                 throw new ArgumentException("Erreur");
 
@@ -88,25 +99,42 @@ internal class Client
                             if (!bool.TryParse(parts[8], out bool Fired))
                                 throw new ArgumentException("Erreur");
 
+                            if (!int.TryParse(parts[9], out int animIndex))
+                                throw new ArgumentException("Erreur");
+
+                            if (!int.TryParse(parts[10], out int animCurrentFrame))
+                                throw new ArgumentException("Erreur");
+                            #endregion
+
                             if (id > Player.PlayerList.Count - 1)
                             {
-                                Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot, pseudo));
+                                Player.PlayerList.Add(new Player(X, Y, Z, Xrot, Yrot, Zrot, pseudo, animIndex, animCurrentFrame));
                                 continue;
                             }
 
-                            Player.PlayerList[id].Position = new Vector3(X, Y, Z);
-                            Player.PlayerList[id].Rotation = new Vector3(Xrot, Yrot, Zrot);
-                            Player.PlayerList[id].Pseudo = pseudo;
+                            try
+                            {
+                                Player.PlayerList[id].Position = new Vector3(X, Y, Z);
+                                Player.PlayerList[id].Rotation = new Vector3(Xrot, Yrot, Zrot);
+                                Player.PlayerList[id].Pseudo = pseudo;
+                                Player.PlayerList[id].animIndex = animIndex;
+                                Player.PlayerList[id].animCurrentFrame = animCurrentFrame;
+                            }
+                            catch (Exception e)
+                            {
+                                ConsoleError($"Erreur Client.cs  : {e}");
+                            }
+                            
 
                             if (Fired)
                                 Bullet.BulletsList.Add(new Bullet(new Vector3(X, Y, Z), new Vector3(Xrot, Yrot, Zrot),
-                                    Default,Player.PlayerList[id]));
+                                    Default, Player.PlayerList[id]));
                             //otherPlayers.Add(id, (X, Y, Z, Xrot, Yrot, Zrot));
                         }
                     }
                     catch (Exception e)
                     {
-                        ConsoleError($"Erreur : {e}");
+                        ConsoleError($"Erreur Client.cs  : {e}");
                     }
                 }
             }
@@ -117,11 +145,11 @@ internal class Client
     ///     Permet d'envoyer les informations du joueur au serveur
     /// </summary>
     /// <param name="camera">toutes les info du joueur</param>
-    public static void SendInfo(Camera3D camera)
+    public static void SendInfo(Camera3D camera, int animIndex, int animCurrentFrame)
     {
-        string position = float.Round(camera.Position.X,4) + "," + float.Round(camera.Position.Y,4) + "," + float.Round(camera.Position.Z,4) + "," + 
-                          float.Round(camera.Target.X,4) + "," + float.Round(camera.Target.Y,4) + "," + float.Round(camera.Target.Z,4) + "," + 
-                          Player.Nom + "," + sendFire;
+        string position = float.Round(camera.Position.X, 4) + "," + float.Round(camera.Position.Y, 4) + "," + float.Round(camera.Position.Z, 4) + "," +
+                          float.Round(camera.Target.X, 4) + "," + float.Round(camera.Target.Y, 4) + "," + float.Round(camera.Target.Z, 4) + "," +
+                          Player.Nom + "," + sendFire + "," + animIndex + "," + animCurrentFrame;
         sendFire = false;
         byte[] data = Encoding.UTF8.GetBytes(position);
         stream.Write(data, 0, data.Length);
@@ -183,7 +211,7 @@ internal class Client
     {
         ConsoleColor old = Console.ForegroundColor;
         Console.ForegroundColor = Color;
-        Console.WriteLine(message);
+        Console.WriteLine("INFO: GAME: "+message);
         Console.ForegroundColor = old;
     }
 

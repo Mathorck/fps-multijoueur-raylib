@@ -14,6 +14,6 @@ internal class Program
 
     private static void ArgsVerif(string[] args)
     {
-        
+         
     }
 }

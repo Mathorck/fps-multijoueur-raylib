@@ -27,6 +27,7 @@ public class Timer
     {
         time = 0;
         IsFinished = false;
+        IsRunning = false;
     }
 
     // Stop the timer
