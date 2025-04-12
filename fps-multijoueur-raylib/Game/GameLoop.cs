@@ -34,6 +34,7 @@ public static class GameLoop
         InitWindow(GetScreenWidth(), GetScreenHeight(), "Dead Ops 3D");
         ToggleFullscreen();
         SetTargetFPS(60);
+        SetConfigFlags(ConfigFlags.VSyncHint);
         InitAudioDevice();
 
         SetVariables();
